@@ -22,10 +22,12 @@
 
 ```text
 3D_IoT_Dashboard_Platform/
-├── firmware/circuitpython/
-│   ├── code.py                 # [★수정 대상] Pico 2 W CircuitPython 메인 펌웨어
-│   ├── settings.toml           # Wi-Fi SSID / PASSWORD
-│   └── README.md
+├── firmware/
+│   ├── mock_pico_server.js     # [★신규 도구] 실물 보드 없이 하드웨어 모드를 100% 테스트하는 Node.js 에뮬레이터
+│   └── circuitpython/
+│       ├── code.py             # [★수정 대상] Pico 2 W CircuitPython 메인 펌웨어
+│       ├── settings.toml       # Wi-Fi SSID / PASSWORD
+│       └── README.md
 │
 ├── src/
 │   ├── core/
@@ -34,12 +36,13 @@
 │   │   └── adapter/
 │   │       ├── IIoTAdapter.ts  # [기반 파일] 어댑터 인터페이스
 │   │       ├── MockIoTAdapter.ts # [★수정 대상] 가상 센서 난수 발생기
-│   │       └── CircuitPythonAdapter.ts # [기반 파일] Pico 2 W HTTP 통신기
+│   │       └── CircuitPythonAdapter.ts # [기반 파일] Pico 2 W HTTP 통신기 (에러 핸들링 및 Stale 감지)
 │   │
 │   ├── components/
 │   │   ├── 3d/
-│   │   │   ├── SceneCanvas.tsx   # [기반 파일] R3F Canvas 래퍼 (조도 동적 연동)
+│   │   │   ├── SceneCanvas.tsx   # [기반 파일] R3F Canvas 래퍼 (조도 동적 연동, 모달 감지 isModalOpen 전달)
 │   │   │   ├── SmartHomeRoom.tsx # [★수정 대상] 3D 가상 공간 룸 메쉬 (방/온실/공장)
+│   │   │   ├── NeedsYouCallout3D.tsx # [신규/개선] 3D 플로팅 말풍선 (z-index 제어, 4.5초 자동소멸, 닫기 버튼)
 │   │   │   ├── DoorObject.tsx    # 서보모터 연동 도어 메쉬
 │   │   │   ├── LightObject.tsx   # RGB LED 연동 조명 메쉬
 │   │   │   ├── DhtSensorBadge.tsx# DHT11 온습도 3D 플로팅 배지
@@ -53,13 +56,15 @@
 │   │       ├── InspectorPanel.tsx    # 우측 3단 멀티탭 인스펙터 (장치 제어 / 센서 출력 / 제어 로그)
 │   │       ├── SensorOutputPanel.tsx # [신규] 실시간 센서 게이지, Raw ADC 스트림, CSV 내보내기 패널
 │   │       ├── ControlLogPanel.tsx   # [신규] 카테고리별(하드웨어/사용자/시뮬레이터/시스템) 실시간 제어 로그 스트림
-│   │       ├── DeviceManageModal.tsx # [신규] 4대 핀아웃(GP15, GP16, GP18~20, GP26) 상태 점검 및 테스트 모달
-│   │       ├── ScheduleModal.tsx     # [신규] 5대 이벤트 구동 자동화 규칙 토글 모달
-│   │       ├── AddRoomModal.tsx      # [신규] 팀별 프로젝트 새 가상 공간 추가 모달
-│   │       ├── ReviewModal.tsx       # [신규] 3D 이상치 감지 시 승인 대기 검토 모달
+│   │       ├── DeviceManageModal.tsx # [신규] 4대 핀아웃(GP15, GP16, GP18~20, GP26) 상태 점검 및 테스트 모달 (z-[100])
+│   │       ├── ScheduleModal.tsx     # [신규] 5대 이벤트 구동 자동화 규칙 토글 모달 (z-[100])
+│   │       ├── AddRoomModal.tsx      # [신규] 팀별 프로젝트 새 가상 공간 추가 모달 (z-[100])
+│   │       ├── ReviewModal.tsx       # [신규] 3D 이상치 감지 시 승인 대기 검토 모달 (z-[100])
+│   │       ├── PicoIpModal.tsx       # [신규] Pico 2 W IP 주소 및 하드웨어 모드 설정 모달 (z-[100])
 │   │       └── PromptBar.tsx         # [신규] 지능형 한국어 자연어 명령 파서 및 퀵 액션 칩
 │   │
 │   └── app/
+│       ├── api/pico/[...path]/route.ts # [신규] 브라우저 CORS 회피 및 IP 정규화 프록시 라우트
 │       ├── layout.tsx            # 루트 레이아웃 & IoTProvider
 │       ├── page.tsx              # 스마트홈 3D 통합 관제 대시보드 메인 페이지
 │       └── 2d/page.tsx           # 2D 클래식 대시보드
@@ -324,3 +329,24 @@ export class MockIoTAdapter implements IIoTAdapter {
 4. **Step 4 (3D 가상 공간 및 UI 연동)**:
    - `src/components/3d/`에 새 씬 컴포넌트(예: `SmartFarmRoom.tsx`)를 생성하고, `SmartHomeRoom.tsx`를 교체합니다.
    - `src/components/ui/SensorOutputPanel.tsx` 및 `InspectorPanel.tsx`에서 새 센서 수치를 표시하는 게이지 및 제어 위젯을 추가합니다.
+
+---
+
+## 8. 핵심 엔지니어링 원칙: 3D 레이어링 & 하드웨어 에러 제어
+
+### [1. Drei `<Html>` Z-Index 간섭 방지 및 Auto-Dismiss 패턴]
+- Three.js 씬 내부에 2D UI(말풍선, 배지 등)를 띄울 때는 `@react-three/drei`의 `<Html>`을 사용합니다.
+- `<Html>`은 기본적으로 `z-index`를 1,600만 대의 매우 큰 값으로 부여하므로, 일반적인 CSS 모달(`z-50`)이 가려지는 문제가 발생합니다.
+- **해결 공식**:
+  1. `<Html zIndexRange={[10, 0]}>`로 3D 오버레이의 최대 z-index를 10 이하로 제한합니다.
+  2. 모달 컨테이너의 z-index를 `z-[100]` 이상으로 설정합니다.
+  3. 모달 열림 플래그(`isModalOpen`)를 3D 컴포넌트에 prop으로 전달하여 모달 활성화 시 말풍선을 즉시 `null`로 언마운트합니다.
+  4. '승인 완료'와 같은 일회성 알림은 `setTimeout(..., 4500)`으로 자동 소멸 처리하고 수동 `✕` 닫기 버튼을 반드시 제공합니다.
+
+### [2. CircuitPython REST 연동 시 에러 머신 및 Stale 센서 감지]
+- `CircuitPythonAdapter.ts`는 다음 원칙으로 네트워크 예외를 방어합니다:
+  1. IP 주소 입력 시 `http://` 접두사와 끝 슬래시를 자동 제거 정규화합니다.
+  2. 요청 실패 시 `store.connectionState !== 'error'` 조건으로 즉시 에러 상태로 전이하여 무한 대기(스피너 영구 고착)를 방지합니다.
+  3. 5초 주기의 `staleCheckInterval`을 구동하여 10초 이상 미수신 센서를 즉시 오프라인(`isStale: true`)으로 처리합니다.
+  4. 학교 실습실이나 오프라인 환경에서는 `node firmware/mock_pico_server.js`를 구동하여 100% 동일한 하드웨어 REST 통신을 모의 검증할 수 있습니다.
+
