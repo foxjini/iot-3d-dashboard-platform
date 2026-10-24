@@ -3,12 +3,14 @@ import { useIoTStore } from '../store/useIoTStore';
 
 export class CircuitPythonAdapter implements IIoTAdapter {
   private pollInterval: NodeJS.Timeout | null = null;
+  private staleCheckInterval: NodeJS.Timeout | null = null;
   private abortController: AbortController | null = null;
 
   init(): void {
     const store = useIoTStore.getState();
+    const cleanIp = (store.picoIpAddress || '').replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
     store.setConnectionState('connecting');
-    store.addLog('info', `Pico 2 W (${store.picoIpAddress}) 연결 시도 중...`, 'PICO_2W');
+    store.addLog('info', `Pico 2 W (${cleanIp || 'IP 미지정'}) 연결 시도 중...`, 'PICO_2W');
 
     // 1.5초마다 Pico 2 W 상태 폴링
     this.pollInterval = setInterval(() => {
@@ -16,19 +18,31 @@ export class CircuitPythonAdapter implements IIoTAdapter {
       this.fetchPicoStatus();
     }, 1500);
 
+    // 5초마다 미수신 센서 stale 검사
+    this.staleCheckInterval = setInterval(() => {
+      useIoTStore.getState().checkStaleSensors();
+    }, 5000);
+
     // 즉시 1회 호출
     this.fetchPicoStatus();
   }
 
   destroy(): void {
     if (this.pollInterval) clearInterval(this.pollInterval);
+    if (this.staleCheckInterval) clearInterval(this.staleCheckInterval);
     if (this.abortController) this.abortController.abort();
   }
 
   private async fetchPicoStatus(): Promise<void> {
     const store = useIoTStore.getState();
-    const ip = store.picoIpAddress;
-    if (!ip) return;
+    const rawIp = store.picoIpAddress;
+    if (!rawIp) {
+      if (store.connectionState !== 'disconnected') {
+        store.setConnectionState('disconnected');
+      }
+      return;
+    }
+    const ip = rawIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
 
     try {
       this.abortController = new AbortController();
@@ -72,16 +86,21 @@ export class CircuitPythonAdapter implements IIoTAdapter {
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '통신 오류';
-      if (store.connectionState === 'connected') {
+      if (store.connectionState !== 'error') {
         store.setConnectionState('error');
-        store.addLog('warn', `Pico 2 W 응답 없음 (${message})`, 'PICO_2W');
+        store.addLog('warn', `Pico 2 W 연결 실패 또는 응답 없음 (${message})`, 'PICO_2W');
       }
     }
   }
 
   async sendServoCommand(angle: number): Promise<boolean> {
     const store = useIoTStore.getState();
-    const ip = store.picoIpAddress;
+    const rawIp = store.picoIpAddress;
+    if (!rawIp) {
+      store.failCommand('sg90_door', 'Pico 2 W IP 주소가 지정되지 않았습니다.');
+      return false;
+    }
+    const ip = rawIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
 
     try {
       const controller = new AbortController();
@@ -119,7 +138,12 @@ export class CircuitPythonAdapter implements IIoTAdapter {
 
   async sendRgbCommand(color: string, state: 'ON' | 'OFF'): Promise<boolean> {
     const store = useIoTStore.getState();
-    const ip = store.picoIpAddress;
+    const rawIp = store.picoIpAddress;
+    if (!rawIp) {
+      store.failCommand('rgb_light', 'Pico 2 W IP 주소가 지정되지 않았습니다.');
+      return false;
+    }
+    const ip = rawIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
 
     try {
       const controller = new AbortController();

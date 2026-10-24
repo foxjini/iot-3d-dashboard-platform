@@ -172,6 +172,13 @@ export default function HomePage() {
             approvalStatus={approvalStatus}
             onApprove={handleApproveProposal}
             onReview={() => setShowReviewModal(true)}
+            isModalOpen={
+              showIpModal ||
+              showDeviceManageModal ||
+              showScheduleModal ||
+              showAddRoomModal ||
+              showReviewModal
+            }
           />
 
           {/* 3D 뷰 캔버스 하단 오버레이 버튼들 */}

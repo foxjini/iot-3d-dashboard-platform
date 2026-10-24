@@ -5,7 +5,10 @@ export async function GET(
   { params }: { params: { path: string[] } }
 ) {
   const searchParams = request.nextUrl.searchParams;
-  const targetIp = searchParams.get('target');
+  const rawTargetIp = searchParams.get('target');
+  const targetIp = rawTargetIp
+    ? rawTargetIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim()
+    : null;
   const path = params.path.join('/');
 
   if (!targetIp) {
@@ -30,7 +33,10 @@ export async function POST(
   { params }: { params: { path: string[] } }
 ) {
   const searchParams = request.nextUrl.searchParams;
-  const targetIp = searchParams.get('target');
+  const rawTargetIp = searchParams.get('target');
+  const targetIp = rawTargetIp
+    ? rawTargetIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim()
+    : null;
   const path = params.path.join('/');
 
   if (!targetIp) {

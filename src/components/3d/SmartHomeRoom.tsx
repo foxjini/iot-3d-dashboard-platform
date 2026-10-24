@@ -12,12 +12,14 @@ interface SmartHomeRoomProps {
   approvalStatus?: 'pending' | 'approved';
   onApprove?: () => void;
   onReview?: () => void;
+  isModalOpen?: boolean;
 }
 
 export function SmartHomeRoom({
   approvalStatus = 'pending',
   onApprove = () => {},
   onReview = () => {},
+  isModalOpen = false,
 }: SmartHomeRoomProps) {
   return (
     <group position={[0, 0, 0]}>
@@ -282,6 +284,7 @@ export function SmartHomeRoom({
         approvalStatus={approvalStatus}
         onApprove={onApprove}
         onReview={onReview}
+        isModalOpen={isModalOpen}
       />
     </group>
   );

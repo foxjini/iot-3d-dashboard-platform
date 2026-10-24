@@ -10,12 +10,14 @@ interface SceneCanvasProps {
   approvalStatus?: 'pending' | 'approved';
   onApprove?: () => void;
   onReview?: () => void;
+  isModalOpen?: boolean;
 }
 
 export function SceneCanvas({
   approvalStatus = 'pending',
   onApprove = () => {},
   onReview = () => {},
+  isModalOpen = false,
 }: SceneCanvasProps) {
   const lightVal = useIoTStore((s) => s.sensors.cds_light.value);
   const rgbState = useIoTStore((s) => s.actuators.rgb_light.reportedState);
@@ -80,6 +82,7 @@ export function SceneCanvas({
           approvalStatus={approvalStatus}
           onApprove={onApprove}
           onReview={onReview}
+          isModalOpen={isModalOpen}
         />
         <CameraRig />
       </Canvas>

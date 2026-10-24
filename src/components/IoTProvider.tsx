@@ -8,6 +8,7 @@ import { IIoTAdapter } from '@/core/adapter/IIoTAdapter';
 
 export function IoTProvider({ children }: { children: React.ReactNode }) {
   const mode = useIoTStore((s) => s.mode);
+  const picoIpAddress = useIoTStore((s) => s.picoIpAddress);
   const currentAdapterRef = useRef<IIoTAdapter | null>(null);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function IoTProvider({ children }: { children: React.ReactNode }) {
       unsubscribe();
       adapter.destroy();
     };
-  }, [mode]);
+  }, [mode, picoIpAddress]);
 
   return <>{children}</>;
 }
