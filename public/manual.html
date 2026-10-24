@@ -3,276 +3,531 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>바이브 코딩(Context 엔지니어링) 실전 매뉴얼 - 3D IoT 대시보드 플랫폼</title>
+  <title>바이브 코딩(Context 엔지니어링) 실전 프레젠테이션 매뉴얼 - 3D IoT 대시보드 플랫폼</title>
   <style>
+    /* -------------------------------------------------------------
+       Meta Brand Presentation Theme Tokens
+       Clean White Base + Meta Blue (#0064E0, #0866FF) + Deep Navy
+       ------------------------------------------------------------- */
     :root {
-      --bg: #090d16;
-      --card-bg: rgba(15, 23, 42, 0.75);
-      --border: rgba(51, 65, 85, 0.6);
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --emerald: #10b981;
-      --amber: #f59e0b;
-      --rose: #f43f5e;
-      --purple: #8b5cf6;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --meta-blue: #0064E0;
+      --meta-blue-hover: #0052B8;
+      --meta-vivid-blue: #0866FF;
+      --meta-sky-blue: #E7F3FF;
+      --meta-navy: #0C1E3C;
+      --meta-dark: #1C2B33;
+      --meta-slate: #4E5D78;
+      --meta-gray-light: #F0F2F5;
+      --meta-gray-subtle: #F7F8FA;
+      --meta-border: #E4E6EB;
+      --meta-border-subtle: #D8DADF;
+      --meta-green: #00A36C;
+      --meta-green-light: #E8F8F0;
+      --meta-amber: #D97706;
+      --meta-amber-light: #FEF3C7;
+      --meta-purple: #7B3FE4;
+      --meta-purple-light: #F3E8FF;
+      --card-shadow: 0 10px 30px rgba(0, 100, 224, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+      --card-shadow-hover: 0 16px 40px rgba(0, 100, 224, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
     }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
-      background-color: var(--bg);
-      color: var(--text-main);
+      background-color: var(--meta-gray-light);
+      color: var(--meta-dark);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       line-height: 1.6;
-      display: flex;
       min-height: 100vh;
-    }
-    /* Sidebar Navigation */
-    aside {
-      width: 290px;
-      background: rgba(15, 23, 42, 0.95);
-      border-right: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      padding: 24px 16px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      flex-shrink: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .logo-badge {
+
+    /* -------------------------------------------------------------
+       Top Meta Presentation Bar & Navigation
+       ------------------------------------------------------------- */
+    header.meta-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--meta-border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    }
+
+    .meta-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .meta-logo-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--meta-blue), #00B2FF);
+      color: #FFFFFF;
+      font-weight: 900;
+      font-size: 19px;
+      box-shadow: 0 4px 12px rgba(0, 100, 224, 0.25);
+    }
+
+    .meta-title-wrap h1 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--meta-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .meta-title-wrap p {
+      font-size: 11.5px;
+      color: var(--meta-slate);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-step-badge {
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--meta-sky-blue);
+      color: var(--meta-blue);
+      border: 1px solid rgba(0, 100, 224, 0.2);
+      padding: 5px 14px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-toggle-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--meta-border-subtle);
+      color: var(--meta-slate);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 800;
-      color: #fff;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
+      gap: 6px;
+      transition: all 0.2s;
     }
-    .logo-badge span {
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 11px;
+
+    .mode-toggle-btn:hover {
+      background: var(--meta-gray-subtle);
+      color: var(--meta-navy);
+      border-color: var(--meta-blue);
     }
-    nav ul {
-      list-style: none;
+
+    /* Top Slide Progress Bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 3px;
+      background: #E4E6EB;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--meta-blue), #00B2FF);
+      width: 12.5%;
+      transition: width 0.3s ease;
+    }
+
+    /* -------------------------------------------------------------
+       Main Presentation Stage (Slide Deck Layout)
+       ------------------------------------------------------------- */
+    main.presentation-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px 96px 20px;
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .slide-card {
+      width: 100%;
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid var(--meta-border);
+      box-shadow: var(--card-shadow);
+      padding: 36px 44px;
+      margin-bottom: 24px;
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .slide-card.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Continuous Scroll Mode (When activated) */
+    body.scroll-mode .slide-card {
+      display: block !important;
+      opacity: 1 !important;
+      transform: none !important;
+      margin-bottom: 40px;
+    }
+
+    /* Slide Header Area */
+    .slide-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1.5px solid var(--meta-border);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      gap: 20px;
+    }
+
+    .slide-header-left {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
-    nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: block;
-      transition: all 0.2s;
-    }
-    nav a:hover, nav a.active {
-      color: #fff;
-      background: rgba(59, 130, 246, 0.15);
-      border-left: 3px solid var(--accent);
-    }
-    /* Main Content */
-    main {
-      flex: 1;
-      padding: 40px 60px;
-      max-width: 1080px;
-      overflow-y: auto;
-    }
-    header.doc-header {
-      margin-bottom: 30px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    header h1 {
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #fff, #93c5fd);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-    }
-    header p {
-      color: var(--text-muted);
-      font-size: 15px;
-    }
-    section {
-      margin-bottom: 50px;
-      scroll-margin-top: 40px;
-    }
-    h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 16px;
-      display: flex;
+
+    .slide-num-pill {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--meta-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
-      border-left: 4px solid var(--accent);
-      padding-left: 12px;
+      gap: 6px;
     }
-    h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #e2e8f0;
-      margin: 20px 0 10px 0;
+
+    .slide-header h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--meta-navy);
+      letter-spacing: -0.4px;
+      line-height: 1.3;
     }
-    p, li {
-      color: #cbd5e1;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 12px;
+
+    .slide-header p.slide-desc {
+      font-size: 13.5px;
+      color: var(--meta-slate);
+      font-weight: 500;
     }
-    ul, ol {
-      padding-left: 20px;
-      margin-bottom: 16px;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      margin: 16px 0;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
+
+    /* Content Layout Grids */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 20px;
+      margin: 20px 0;
     }
-    table {
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    /* Info Box & Cards */
+    .meta-box {
+      background: var(--meta-gray-subtle);
+      border: 1px solid var(--meta-border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
+
+    .meta-box.highlight {
+      background: var(--meta-sky-blue);
+      border-color: rgba(0, 100, 224, 0.3);
+    }
+
+    .meta-box.success {
+      background: var(--meta-green-light);
+      border-color: rgba(0, 163, 108, 0.3);
+    }
+
+    .meta-box.warning {
+      background: var(--meta-amber-light);
+      border-color: rgba(217, 119, 6, 0.3);
+    }
+
+    .meta-box h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--meta-navy);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-box p {
+      font-size: 13px;
+      color: var(--meta-slate);
+      line-height: 1.6;
+    }
+
+    .meta-box ul, .meta-box ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .meta-box li {
+      font-size: 12.5px;
+      color: var(--meta-dark);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+
+    /* Meta Master Banner */
+    .master-banner {
+      background: linear-gradient(135deg, #0050B8 0%, #0064E0 60%, #00B2FF 100%);
+      color: #FFFFFF;
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 14px 35px rgba(0, 100, 224, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .master-banner h3 {
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .master-banner p {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.65;
+      margin-bottom: 18px;
+      max-width: 860px;
+    }
+
+    .master-copy-btn {
+      background: #FFFFFF;
+      color: var(--meta-blue);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s;
+    }
+
+    .master-copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .master-copy-btn.copied {
+      background: var(--meta-green);
+      color: #FFFFFF;
+    }
+
+    /* Prompt Box with Meta Blue Card Styling */
+    .prompt-box {
+      background: #FFFFFF;
+      border: 1px solid var(--meta-border);
+      border-left: 5px solid var(--meta-blue);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s;
+    }
+
+    .prompt-box:hover {
+      box-shadow: var(--card-shadow);
+    }
+
+    .prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .prompt-title-text {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--meta-navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prompt-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--meta-sky-blue);
+      color: var(--meta-blue);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .copy-btn {
+      background: var(--meta-blue);
+      color: #FFFFFF;
+      border: none;
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--meta-blue-hover);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn.copied {
+      background: var(--meta-green);
+    }
+
+    pre.code-block {
+      background: #0F172A;
+      color: #E2E8F0;
+      padding: 16px;
+      border-radius: 12px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+      max-height: 280px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #1E293B;
+    }
+
+    /* Tables */
+    table.meta-table {
       width: 100%;
       border-collapse: collapse;
       margin: 16px 0;
       font-size: 13px;
     }
-    th, td {
-      padding: 12px 14px;
+
+    table.meta-table th {
+      background: var(--meta-sky-blue);
+      color: var(--meta-navy);
+      font-weight: 700;
+      padding: 12px 16px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--meta-border);
     }
-    th {
-      background: rgba(30, 41, 59, 0.8);
-      color: #94a3b8;
-      font-weight: 600;
+
+    table.meta-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--meta-border);
+      color: var(--meta-dark);
     }
-    tr:hover {
-      background: rgba(30, 41, 59, 0.4);
+
+    table.meta-table tr:hover {
+      background: var(--meta-gray-subtle);
     }
+
+    /* Code Tags & File Chips */
     code {
-      background: #1e293b;
-      color: #38bdf8;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-    }
-    pre {
-      background: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      overflow-x: auto;
       font-family: Consolas, monospace;
       font-size: 12.5px;
-      color: #e2e8f0;
-      margin: 14px 0;
-      max-height: 380px;
+      background: #EBF2FA;
+      color: var(--meta-blue);
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-weight: 600;
     }
-    /* Master Banner Box */
-    .master-banner {
-      background: linear-gradient(135deg, rgba(30, 58, 138, 0.5), rgba(88, 28, 135, 0.5));
-      border: 2px solid #3b82f6;
-      border-radius: 18px;
-      padding: 24px;
-      margin-bottom: 35px;
-      box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.3);
-    }
-    .master-banner h3 {
-      font-size: 18px;
-      color: #fff;
-      margin: 0 0 8px 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .master-banner p {
-      color: #cbd5e1;
-      font-size: 13.5px;
-      margin-bottom: 16px;
-    }
-    .master-btn {
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
+
+    .file-chip {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-      transition: all 0.2s;
-    }
-    .master-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
-    }
-    .master-btn.copied {
-      background: #059669;
-    }
-    /* Prompt Box with Copy */
-    .prompt-box {
-      background: #0d1527;
-      border: 1px solid #1e3a8a;
-      border-radius: 14px;
-      padding: 20px;
-      margin: 20px 0;
-      position: relative;
-    }
-    .prompt-title {
-      font-weight: 700;
-      font-size: 14px;
-      color: #60a5fa;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .prompt-badge {
-      font-size: 11px;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.4);
+      gap: 4px;
+      font-family: Consolas, monospace;
+      font-size: 11.5px;
+      background: #F0F4F9;
+      color: var(--meta-navy);
+      border: 1px solid var(--meta-border);
       padding: 2px 8px;
-      border-radius: 9999px;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 2px 0;
     }
-    .copy-btn {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 12px;
+
+    /* -------------------------------------------------------------
+       Bottom Floating Slide Controller Dock
+       ------------------------------------------------------------- */
+    .slide-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--meta-border);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    body.scroll-mode .slide-dock {
+      display: none;
+    }
+
+    .dock-btn {
+      background: var(--meta-gray-subtle);
+      border: 1px solid var(--meta-border);
+      color: var(--meta-navy);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
@@ -280,87 +535,859 @@
       gap: 6px;
       transition: all 0.2s;
     }
-    .copy-btn:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
+
+    .dock-btn:hover:not(:disabled) {
+      background: var(--meta-blue);
+      color: #FFFFFF;
+      border-color: var(--meta-blue);
     }
-    .copy-btn.copied {
-      background: #059669;
+
+    .dock-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
     }
-    .alert-box {
-      border-left: 4px solid var(--amber);
-      background: rgba(245, 158, 11, 0.1);
-      padding: 16px 20px;
+
+    .dock-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dock-dot {
+      width: 28px;
+      height: 28px;
       border-radius: 8px;
-      margin: 18px 0;
-      font-size: 13.5px;
-    }
-    .solution-box {
-      border-left: 4px solid var(--emerald);
-      background: rgba(16, 185, 129, 0.1);
-      padding: 16px 20px;
-      border-radius: 8px;
-      margin: 18px 0;
-      font-size: 13.5px;
-    }
-    .file-tag {
-      display: inline-block;
-      font-family: monospace;
+      border: 1px solid var(--meta-border);
+      background: #FFFFFF;
+      color: var(--meta-slate);
       font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(59, 130, 246, 0.2);
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      margin: 2px 0;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dock-dot:hover {
+      border-color: var(--meta-blue);
+      color: var(--meta-blue);
+    }
+
+    .dock-dot.active {
+      background: var(--meta-blue);
+      color: #FFFFFF;
+      border-color: var(--meta-blue);
+      box-shadow: 0 2px 8px rgba(0, 100, 224, 0.3);
+    }
+
+    .dock-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--meta-slate);
+      padding: 0 4px;
+    }
+
+    .fullscreen-btn {
+      background: transparent;
+      border: none;
+      color: var(--meta-slate);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      background: var(--meta-gray-subtle);
+      color: var(--meta-navy);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 900px) {
+      .slide-card {
+        padding: 24px 20px;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .slide-dock {
+        width: calc(100% - 32px);
+        justify-content: space-between;
+        bottom: 12px;
+      }
+      .dock-dots {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar TOC -->
-  <aside>
-    <div class="logo-badge">
-      <span>AI Vibe Coding</span>
-      IoT 대시보드 매뉴얼
+  <!-- 1. Top Meta Presentation Header -->
+  <header class="meta-header">
+    <div class="meta-brand">
+      <div class="meta-logo-badge">M</div>
+      <div class="meta-title-wrap">
+        <h1>
+          <span>스마트홈 3D IoT 대시보드 플랫폼</span>
+          <span style="font-weight:400; color:var(--meta-slate);">|</span>
+          <span style="color:var(--meta-blue);">바이브 코딩 실전 매뉴얼</span>
+        </h1>
+        <p>Meta Brand Presentation Deck Style · 고교 팀 프로젝트 맞춤형 단계별 가이드</p>
+      </div>
     </div>
-    <nav>
-      <ul>
-        <li><a href="#sec-master">⭐ 0. AI에게 플랫폼 전체 학습시키기</a></li>
-        <li><a href="#sec-overview">1. 플랫폼 및 베이스라인 개요</a></li>
-        <li><a href="#sec-hardware">2. 하드웨어 결선 & CircuitPython</a></li>
-        <li><a href="#sec-vibe-core">3. 왜 AI가 엉뚱한 코드를 짤까? (Context 원리)</a></li>
-        <li><a href="#sec-recipes">4. 팀별 프로젝트 주제 변경 실전 레시피</a></li>
-        <li><a href="#sec-ui-features">⭐ 5. 대시보드 UI 기능 구현 & 팀별 커스터마이징 가이드</a></li>
-        <li><a href="#sec-context-guide">⭐ 6. [학생 실습] 팀별 Context 문장 작성법 & 예시문</a></li>
-        <li><a href="#sec-prompts">7. 실전 완성형 프롬프트 12선 (원클릭 풀 복사)</a></li>
-        <li><a href="#sec-faq">8. 트러블슈팅 & FAQ</a></li>
-      </ul>
-    </nav>
-  </aside>
 
-  <!-- Main Content -->
-  <main>
-    <header class="doc-header">
-      <h1>생성형 AI 바이브 코딩 실전 가이드북</h1>
-      <p>팀별 주제에 맞춰 스마트홈 3D IoT 플랫폼을 자유롭게 개조하고 기능을 확장하는 Context 엔지니어링 매뉴얼</p>
-    </header>
+    <div class="header-actions">
+      <div class="slide-step-badge" id="header-step-indicator">
+        <span>STEP 01</span>
+        <span style="color:var(--meta-slate);">/</span>
+        <span>08</span>
+      </div>
 
-    <!-- 0. 마스터 컨텍스트 배너 (신규 핵심) -->
-    <section id="sec-master">
+      <button class="mode-toggle-btn" onclick="toggleScrollMode()" id="scroll-toggle-btn" title="슬라이드 발표 ↔ 전체 문서 연속 스크롤 전환">
+        <span>📄 전체 스크롤 모드</span>
+      </button>
+
+      <a href="http://localhost:3001/" target="_blank" class="mode-toggle-btn" style="background:var(--meta-blue); color:#fff; border-color:var(--meta-blue);" title="3D 대시보드로 이동">
+        <span>🚀 3D 대시보드 열기</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Top Progress Fill -->
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- 2. Main Presentation Stage (8 Slides) -->
+  <main class="presentation-stage">
+
+    <!-- =========================================================
+         SLIDE 1: 플랫폼 개요 & AI 마스터 지식 베이스
+         ========================================================= -->
+    <article class="slide-card active" id="slide-1">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 01</span>
+            <span>·</span>
+            <span>OVERVIEW & MASTER CONTEXT</span>
+          </div>
+          <h2>1. 스마트홈 3D IoT 플랫폼 개요 & AI 마스터 학습</h2>
+          <p class="slide-desc">고등학교 학생 팀 프로젝트를 위해 설계된 3D 가상 공간 ↔ 마이크로컨트롤러(Pico 2 W) 통합 플랫폼입니다.</p>
+        </div>
+      </div>
+
+      <!-- 마스터 컨텍스트 원클릭 복사 배너 -->
       <div class="master-banner">
-        <h3>🚀 [필수 1단계] AI에게 우리 플랫폼 전체를 한 번에 학습시키기</h3>
+        <h3>🚀 [필수 1단계] AI에게 플랫폼 전체 아키텍처 한 번에 학습시키기</h3>
         <p>
-          ChatGPT, Claude, Gemini 웹 챗봇을 열고 <strong>맨 처음에 아래 버튼을 눌러 복사된 내용을 그대로 붙여넣으세요!</strong><br>
-          우리 프로젝트의 아키텍처, <code>useIoTStore</code> 스토어 구조, CircuitPython 핀맵, 3D 씬 규칙이 담긴 <strong>마스터 지식 베이스(PLATFORM_FULL_CONTEXT)</strong>가 전달되어, 이후 어떤 수정을 요구해도 AI가 100% 정상 작동하는 완벽한 코드를 만들어냅니다.
+          ChatGPT, Claude, Gemini, Antigravity 채팅창을 열고 <strong>맨 처음에 아래 버튼을 눌러 복사된 내용을 그대로 붙여넣으세요!</strong><br>
+          우리 프로젝트의 3D R3F 아키텍처, Zustand 스토어 구조, CircuitPython 핀맵, REST 규격이 집약된 <strong>마스터 컨텍스트</strong>가 주입되어, 이후 어떤 수정을 요구해도 AI가 100% 정상 작동하는 코드를 생성합니다.
         </p>
-        <button class="master-btn" onclick="copyMasterContext(this)">
+        <button class="master-copy-btn" onclick="copyMasterContext(this)">
           📋 플랫폼 전체 마스터 컨텍스트 복사하기 (클릭)
         </button>
-        <textarea id="master-context-data" style="display:none;" readonly># PLATFORM_FULL_CONTEXT: 3D IoT 대시보드 플랫폼 전체 마스터 컨텍스트
+      </div>
 
-이 문서는 학생 팀 프로젝트용 "스마트홈 3D IoT 공통 개발 플랫폼"의 전체 아키텍처, 데이터 흐름, 핵심 파일 코드 및 확장 규칙을 단 하나의 문서로 집약한 AI 마스터 지식 베이스(Master Knowledge Base)입니다.
-생성형 AI(ChatGPT, Claude, Gemini, Cursor 등)에게 이 문서 전문을 입력하면, AI가 프로젝트 전체 구조를 100% 파악하여 환각 없이 완벽하게 작동하는 코드를 생성할 수 있습니다.
+      <div class="grid-3">
+        <div class="meta-box highlight">
+          <h3>🌐 3D 가상 공간 (R3F)</h3>
+          <p>Next.js 14 + React Three Fiber로 실시간 렌더링되며, 방의 가구와 센서 오브젝트가 물리 장치와 1:1로 결합되어 있습니다.</p>
+          <ul>
+            <li>스마트 거실 허브 (기본)</li>
+            <li>스마트 팜 온실 (확장)</li>
+            <li>스마트 팩토리 공정 (확장)</li>
+          </ul>
+        </div>
+
+        <div class="meta-box">
+          <h3>⚡ 하드웨어 코어 (Pico 2 W)</h3>
+          <p>RP2350 듀얼코어 기반 Wi-Fi 마이크로컨트롤러로, CircuitPython 9.x 펌웨어가 REST API 서버를 구동합니다.</p>
+          <ul>
+            <li>DHT11 온습도 센서 (GP15)</li>
+            <li>Cds 아날로그 조도 (GP26)</li>
+            <li>SG90 서보모터 (GP16)</li>
+            <li>RGB 3색 LED (GP18~20)</li>
+          </ul>
+        </div>
+
+        <div class="meta-box success">
+          <h3>🤖 AI 바이브 코딩 (Context)</h3>
+          <p>학생들이 복잡한 수동 코딩 없이, 생성형 AI에게 팀 주제와 핀맵만 말해주면 5대 핵심 코드가 자동 개조됩니다.</p>
+          <ul>
+            <li>시뮬레이션 모드 100% 지원</li>
+            <li>원클릭 핀맵 교체기 탑재</li>
+            <li>환각 없는 안전 변경 보증</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 2: 4종 하드웨어 결선 & CircuitPython REST 규격
+         ========================================================= -->
+    <article class="slide-card" id="slide-2">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 02</span>
+            <span>·</span>
+            <span>HARDWARE & REST API</span>
+          </div>
+          <h2>2. 4종 레퍼런스 하드웨어 핀맵 & CircuitPython 통신 규격</h2>
+          <p class="slide-desc">실제 Raspberry Pi Pico 2 W와 브레드보드에 연결되는 표준 핀맵과 JSON REST API 규격을 안내합니다.</p>
+        </div>
+      </div>
+
+      <table class="meta-table">
+        <thead>
+          <tr>
+            <th>장치명</th>
+            <th>Pico 2 W 핀</th>
+            <th>신호 및 프로토콜</th>
+            <th>3D 가상 공간 연동 기능</th>
+            <th>REST API 엔드포인트</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DHT11 온습도</strong></td>
+            <td><code>GP15</code> (디지털)</td>
+            <td>단선 디지털 버스 (2초 주기 샘플링)</td>
+            <td>실시간 온도/습도 수치 플로팅 뱃지 표시</td>
+            <td><code>GET /api/status</code> (temperature, humidity)</td>
+          </tr>
+          <tr>
+            <td><strong>Cds 조도 센서</strong></td>
+            <td><code>GP26</code> (ADC0)</td>
+            <td>16비트 아날로그 전압 (0~65535)</td>
+            <td>3D 가상 공간 앰비언트 자연광 밝기 실시간 제어</td>
+            <td><code>GET /api/status</code> (light_adc)</td>
+          </tr>
+          <tr>
+            <td><strong>SG90 서보모터</strong></td>
+            <td><code>GP16</code> (PWM)</td>
+            <td>50Hz PWM (0~180도 각도 제어)</td>
+            <td>3D 스마트 도어 회전 및 온실 환기 돔 개폐 연동</td>
+            <td><code>POST /api/actuators/servo</code></td>
+          </tr>
+          <tr>
+            <td><strong>RGB 3색 LED</strong></td>
+            <td><code>GP18, GP19, GP20</code></td>
+            <td>3채널 PWM (공통 캐소드 GND)</td>
+            <td>3D 펜던트 조명 발광 색상 및 ON/OFF 연동</td>
+            <td><code>POST /api/actuators/rgb</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2">
+        <div class="meta-box">
+          <h3>📡 CircuitPython CORS 지원 REST 서버</h3>
+          <p>브라우저(Next.js)와 Pico 2 W 간 직접 통신 시 CORS 차단을 방지하기 위해 <code>OPTIONS</code> 프리플라이트 헤더를 지원합니다:</p>
+          <pre class="code-block">Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type</pre>
+        </div>
+
+        <div class="meta-box highlight">
+          <h3>🔌 하드웨어 없을 때: Mock 시뮬레이션 모드</h3>
+          <p>하드웨어가 준비되지 않았거나 집에서 개발할 때는 대시보드 상단의 [시뮬레이션 모드]를 켜면 브라우저 내에서 가상 데이터가 생성되어 100% 동일하게 테스트할 수 있습니다.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 3: AI 바이브 코딩 성공 공식 & 5대 수정 경계
+         ========================================================= -->
+    <article class="slide-card" id="slide-3">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 03</span>
+            <span>·</span>
+            <span>VIBE CODING CORE PRINCIPLES</span>
+          </div>
+          <h2>3. AI 바이브 코딩 성공 공식 & 5대 핵심 수정 경계</h2>
+          <p class="slide-desc">왜 생성형 AI에게 질문하면 기존 코드를 다 망가뜨릴까요? 컨텍스트(Context) 엔지니어링의 핵심 원리를 이해합니다.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="meta-box warning">
+          <h3>❌ 실패하는 학생의 질문 방식</h3>
+          <p>"스마트팜 만들고 싶은데 코드 짜줘."</p>
+          <ul>
+            <li>AI가 우리 프로젝트에 <code>useIoTStore</code>가 있는지 모름</li>
+            <li>CircuitPython 라이브러리 대신 아두이노 C++ 코드 생성</li>
+            <li>기존 3D R3F 씬을 다 지우고 빈 컴포넌트 출력</li>
+          </ul>
+        </div>
+
+        <div class="meta-box success">
+          <h3>✅ 성공하는 바이브 코딩 공식</h3>
+          <p>"아래 5대 파일의 역할 분담에 맞춰 신규 센서/액추에이터를 연동해줘."</p>
+          <ul>
+            <li>기존 구조를 100% 보존하며 신규 장치만 정확히 결합</li>
+            <li>단 한 번의 요청으로 3D 오브젝트와 UI 위젯 동시 완성</li>
+            <li>환각(Hallucination) 제로 및 빌드 에러 0건 보증</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="font-size:16px; font-weight:800; color:var(--meta-navy); margin: 24px 0 12px 0;">
+        🛡️ 반드시 준수해야 하는 5대 핵심 파일 수정 경계 (Change Boundary)
+      </h3>
+
+      <div class="grid-2">
+        <div class="meta-box">
+          <h3>1. 핀맵 정의: <span class="file-chip">context/CONTEXT_CIRCUITPYTHON_MAP.md</span></h3>
+          <p>새 센서의 GPIO 핀 번호와 REST API 엔드포인트를 기재하여 Pico 2 W 펌웨어 <code>code.py</code>와 일치시킵니다.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>2. 타입 정의: <span class="file-chip">src/core/types/iot.ts</span></h3>
+          <p>TypeScript 센서/액추에이터 인터페이스에 신규 필드(예: <code>soil_moisture</code>)를 정의합니다.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>3. 가상 데이터: <span class="file-chip">src/core/adapter/MockIoTAdapter.ts</span></h3>
+          <p>하드웨어가 없을 때도 브라우저에서 동작할 수 있도록 시뮬레이션 데이터 생성 루프를 추가합니다.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>4. 3D 공간 오브젝트: <span class="file-chip">src/components/3d/</span></h3>
+          <p>3D 씬 안에 화분, 기계 팔, 센서 노드 등 새 주제에 어울리는 Three.js 메쉬를 렌더링합니다.</p>
+        </div>
+      </div>
+
+      <div class="meta-box highlight" style="margin-top:12px;">
+        <h3>5. 대시보드 UI 연동: <span class="file-chip">src/components/ui/InspectorPanel.tsx</span> & <span class="file-chip">SensorOutputPanel.tsx</span></h3>
+        <p>오른쪽 제어 패널에 새 센서 수치 게이지 카드와 액추에이터 원격 제어 토글/슬라이더 위젯을 배치합니다.</p>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 4: 4단계 Context 구조 설계 공식 & 빈칸 템플릿
+         ========================================================= -->
+    <article class="slide-card" id="slide-4">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 04</span>
+            <span>·</span>
+            <span>CONTEXT DESIGN & TEMPLATE</span>
+          </div>
+          <h2>4. 4단계 Context 구조 설계 공식 & 만능 빈칸 템플릿</h2>
+          <p class="slide-desc">어떤 기발한 팀 프로젝트 아이디어라도, 아래 4단계 구조와 빈칸 템플릿에 넣으면 3분 만에 최적화 코드가 나옵니다.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="meta-box">
+          <h3>📐 [블록 1] AI 역할 & 기반 플랫폼 선언</h3>
+          <p>"당신은 Next.js 14 + R3F + Zustand + Pico 2 W로 구동되는 스마트홈 3D IoT 대시보드 전문 개발자입니다. <code>PLATFORM_FULL_CONTEXT.md</code> 아키텍처를 기반으로 작업합니다."</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>🎯 [블록 2] 팀 프로젝트 주제 & 제어 시나리오</h3>
+          <p>"우리 팀은 [프로젝트 명]을 개발합니다. 어떤 상황에서 어떤 센서가 측정되고, 어떤 액추에이터가 자동으로 동작하는지 서술합니다."</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>🔌 [블록 3] 신규 센서 및 모터 핀맵</h3>
+          <p>"센서: [센서명](GPIO 핀, 측정 단위) / 액추에이터: [구동기명](GPIO 핀, 제어 동작)"</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>📋 [블록 4] 5대 파일 수정 지침 선언</h3>
+          <p>"5대 수정 경계(타입, 시뮬레이터, 핀맵, 3D 씬, UI 패널)의 순서대로 코드를 수정하고 연동해주세요."</p>
+        </div>
+      </div>
+
+      <!-- 빈칸 완성형 템플릿 카드 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>⭐ 학생 실습용: 빈칸 완성형 만능 프롬프트 템플릿</span>
+            <span class="prompt-badge">원클릭 복사 후 [ ] 괄호만 채우세요</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('template-blank-fill', this)">
+            📋 템플릿 복사
+          </button>
+        </div>
+        <pre class="code-block" id="template-blank-fill">당신은 Next.js 14 + Three.js(React Three Fiber) + Zustand + Raspberry Pi Pico 2 W(CircuitPython 9.x)로 구동되는 '스마트홈 3D IoT 공통 플랫폼'의 전문 개발자입니다.
+
+[1. 프로젝트 주제 및 목표]
+- 프로젝트 이름: [예: 스마트 펫 케어 하우스 / 스마트 수직 농장 / 스마트 도서관]
+- 핵심 목적: [예: 반려동물의 식사 주기 자동 급여 및 실내 온도 모니터링]
+
+[2. 하드웨어 구성 및 핀맵]
+- 신규 센서: [예: 초음파 거리 센서 (HC-SR04)] -> Pico 2 W의 [GP27] 핀 (단위: cm)
+- 기존 센서 유지: [예: DHT11 온습도 센서 (GP15)]
+- 신규 액추에이터: [예: 사료 배출 회전 서보모터 (SG90)] -> Pico 2 W의 [GP16] 핀 (0~90도 회전)
+- 신규 조명/표시: [예: 상태 표시 RGB LED (GP18, GP19, GP20)]
+
+[3. 제어 자동화 규칙]
+- [예: 사료 그릇 거리가 15cm 이상(사료 부족)일 때 서보모터를 90도로 3초간 회전하여 사료 공급]
+
+[4. 요청 작업 (Context Engineering 준수)]
+다음 5대 파일 수정 원칙에 따라 필요한 코드 변경 사항을 작성해주세요:
+1. `context/CONTEXT_CIRCUITPYTHON_MAP.md` 및 `firmware/pico2w/code.py`: 핀맵 및 REST 핸들러 추가
+2. `src/core/types/iot.ts`: 신규 센서/액추에이터 타입 정의
+3. `src/core/adapter/MockIoTAdapter.ts`: 시뮬레이션 데이터 발생기 추가
+4. `src/components/3d/`: 3D 가상 공간 씬 컴포넌트 렌더링
+5. `src/components/ui/InspectorPanel.tsx`: 제어 스위치 및 게이지 카드 연동</pre>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 5: 실전 Context 예시 1~3 (스마트팜, 팩토리, 도어)
+         ========================================================= -->
+    <article class="slide-card" id="slide-5">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 05</span>
+            <span>·</span>
+            <span>TOPIC SHOWCASE A</span>
+          </div>
+          <h2>5. 팀별 주제 Context 예시문 1~3 (스마트팜 / 팩토리 / 도어)</h2>
+          <p class="slide-desc">가장 인기 있는 3대 팀 프로젝트 주제의 완성된 Context 프롬프트 예시입니다. 복사해서 바로 활용하세요.</p>
+        </div>
+      </div>
+
+      <!-- 예시 1: 스마트 팜 온실 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 1. 🌿 [스마트팜] 토양 수분 감지 및 자동 환기 온실</span>
+            <span class="prompt-badge">GP27(토양수분) + GP16(환기 서보)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-farm', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-farm">우리 팀은 스마트 에그리테크 프로젝트로 [스마트 팜 온실(Smart Farm Greenhouse)]을 제작합니다.
+- 하드웨어: 토양 수분 센서를 Pico 2 W의 GP27(ADC1)에 연결하여 화분의 수분량(0~100%)을 실시간 측정합니다. 기존 DHT11(GP15) 온습도 센서도 함께 사용하여 온실 내부 온도를 모니터링합니다. SG90 서보모터(GP16)는 방문 대신 '온실 상단 환기 돔 개폐기'로 동작하며, RGB LED(GP18~20)는 일조량 부족 시 '식물 생장용 보라색 조명'으로 자동 점등됩니다.
+- 3D 가상 공간: 거실 대신 투명 유리 프레임 온실 돔과 중앙 화분 배드를 배치하고, 서보 각도에 따라 지붕 돔이 부드럽게 열리는 3D 애니메이션을 연동해주세요.
+- 대시보드 UI: 토양 수분 게이지 카드와 온실 환기 돔 수동 개폐 슬라이더를 추가해주세요.</pre>
+      </div>
+
+      <!-- 예시 2: 스마트 팩토리 공정 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 2. 🏭 [스마트 팩토리] 컨베이어 제품 감지 및 불량품 선별</span>
+            <span class="prompt-badge">GP17(초음파) + GP22(분류 서보)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-factory', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-factory">우리 팀은 스마트 제조 분야의 [스마트 팩토리 자동 분류 생산 라인]을 제작합니다.
+- 하드웨어: 초음파 거리 센서를 Pico 2 W의 GP17(Echo), GP27(Trig)에 연결하여 컨베이어 벨트를 지나가는 부품의 높이 및 거리를 계측합니다. 정상 규격을 벗어난 물품이 감지되면(거리 < 8cm) 서보모터(GP16)가 '불량품 푸셔 암'을 90도 회전시켜 배출 라인으로 밀어냅니다. RGB LED(GP18~20)는 정상 가동 시 녹색, 불량 감지 시 적색 경고등으로 점멸합니다.
+- 3D 가상 공간: 산업용 컨베이어 벨트, 로봇 암 지지대, 물품 박스 메쉬를 3D 공간에 배치하고 서보모터 회전에 맞춰 푸셔 암이 움직이도록 연동해주세요.
+- 대시보드 UI: 생산 라인 분당 통과 수량 카운터와 불량률(%) 통계 위젯을 추가해주세요.</pre>
+      </div>
+
+      <!-- 예시 3: 스마트 출입 보안 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 3. 🚪 [스마트 보안] 비접촉 출입 인증 및 자동 개폐 도어</span>
+            <span class="prompt-badge">GP28(PIR 인체감지) + GP16(도어 서보)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-security', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-security">우리 팀은 주거 안전을 위한 [비접촉 모션 감지 스마트 보안 도어락]을 제작합니다.
+- 하드웨어: PIR 인체 모션 감지 센서를 Pico 2 W의 GP28(Digital In)에 연결하여 도어 앞 사람의 접근을 감지합니다. 등록된 인증 요청이 들어오면 SG90 서보모터(GP16)가 90도로 회전하여 도어를 개방하고 5초 후 자동으로 잠깁니다. RGB LED(GP18~20)는 대기 중 파란색, 인증 성공 시 초록색, 무단 침입 감지 시 빨간색 사이렌 점멸을 수행합니다.
+- 3D 가상 공간: 보안 도어 프레임과 도어락 키패드를 강조하고, 도어 개폐 각도를 Three.js 피벗 회전으로 부드럽게 연동해주세요.
+- 대시보드 UI: 실시간 출입 로그 기록 리스트와 긴급 도어 강제 잠금 스위치를 추가해주세요.</pre>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 6: 실전 Context 예시 4~6 (에너지, 방재, 헬스케어)
+         ========================================================= -->
+    <article class="slide-card" id="slide-6">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 06</span>
+            <span>·</span>
+            <span>TOPIC SHOWCASE B</span>
+          </div>
+          <h2>6. 팀별 주제 Context 예시문 4~6 (에너지 / 화재방재 / 헬스케어)</h2>
+          <p class="slide-desc">환경, 안전, 헬스케어 등 사회적 문제를 해결하는 다양한 아이디어의 Context 프롬프트 예시입니다.</p>
+        </div>
+      </div>
+
+      <!-- 예시 4: 스마트 에너지 관리 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 4. ⚡ [스마트 에너지] 대기전력 차단 및 조도 연동 절전 플러그</span>
+            <span class="prompt-badge">GP26(Cds 조도) + GP14(릴레이)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-energy', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-energy">우리 팀은 탄소 중립을 위한 [친환경 스마트홈 대기전력 차단 시스템]을 개발합니다.
+- 하드웨어: Cds 조도 센서(GP26)로 실내 조도를 측정하고, 재실자 부재 시 대기전력 차단 릴레이(GP14)를 OFF합니다. SG90 서보모터(GP16)는 '스마트 블라인드 각도 조절기'로 작동하여 외부 태양광 유입량을 조절하고, RGB LED(GP18~20)는 현재 소비 전력 단계(초록: 절전, 노랑: 표준, 빨강: 과부하)를 표시합니다.
+- 3D 가상 공간: 거실 창문에 3D 블라인드 루버를 배치하여 서보 각도에 따라 블라인드가 열리고 닫히는 채광 시뮬레이션을 구현해주세요.
+- 대시보드 UI: 금일 누적 절감 전력량(kWh) 게이지와 탄소 배출 저감 지표를 시각화해주세요.</pre>
+      </div>
+
+      <!-- 예시 5: 유해가스 및 화재 방재 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 5. 🚨 [화재/방재] 유해가스 누출 감지 및 비상 피난 환기</span>
+            <span class="prompt-badge">GP26(MQ-2 가스) + GP14(경보 부저)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-gas', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-gas">우리 팀은 주방 및 보일러실 안전을 위한 [유해가스 누출 감지 및 자동 환기 방재 허브]를 제작합니다.
+- 하드웨어: MQ-2 가스/연기 센서를 Pico 2 W의 GP26(ADC0)에 연결하여 가스 농도(ppm)를 감지합니다. 기준치 초과 시 비상 피에조 부저(GP14)에서 85dB 경보음을 출력하고, SG90 서보모터(GP16)가 비상 배기창을 90도 개방하여 실내 가스를 신속히 배출합니다. RGB LED(GP18~20)는 적색 비상 점멸등으로 작동합니다.
+- 3D 가상 공간: 주방 가스 감지 노드와 비상 배풍구를 3D 씬에 구현하고 위험 발생 시 3D 공간 전체에 붉은색 경보 조명을 투시해주세요.
+- 대시보드 UI: 실시간 가스 농도 추이 그래프와 소방서 긴급 신고 원클릭 모의 버튼을 추가해주세요.</pre>
+      </div>
+
+      <!-- 예시 6: 헬스케어 & 실버케어 -->
+      <div class="prompt-box">
+        <div class="prompt-header">
+          <div class="prompt-title-text">
+            <span>예시 6. 💓 [헬스케어] 독거노인 생체 신호 및 안심 낙상 케어</span>
+            <span class="prompt-badge">GP27(맥박 센서) + GP16(비상 약 디스펜서)</span>
+          </div>
+          <button class="copy-btn" onclick="copyFullPrompt('context-ex-health', this)">
+            📋 Context 복사
+          </button>
+        </div>
+        <pre class="code-block" id="context-ex-health">우리 팀은 고령화 사회를 위한 [독거노인 안심 케어 및 스마트 복약 디스펜서]를 개발합니다.
+- 하드웨어: 맥박/심박 센서를 Pico 2 W의 GP27(ADC1)에 연결하여 착용자의 심박수(BPM)를 계측하고, DHT11(GP15)로 침실 적정 온습도를 유지합니다. 복약 시간이 되면 SG90 서보모터(GP16)가 '약통 셔터'를 90도 회전시켜 약을 배출하며, RGB LED(GP18~20)는 온화한 주황색 복약 안내등으로 켜집니다.
+- 3D 가상 공간: 침대 옆 스마트 복약 기기와 바이오 모니터링 허브를 3D로 배치해주세요.
+- 대시보드 UI: 실시간 심박수 BPM 게이지와 일일 복약 이행 완료 체크리스트를 연동해주세요.</pre>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 7: 실전 완성형 프롬프트 12선
+         ========================================================= -->
+    <article class="slide-card" id="slide-7">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 07</span>
+            <span>·</span>
+            <span>12 COMPLETE PROMPTS</span>
+          </div>
+          <h2>7. 실전 완성형 프롬프트 12선 (원클릭 풀 복사)</h2>
+          <p class="slide-desc">코드 스니펫이 통째로 포함되어 있어, 복사해서 AI에게 붙여넣기만 하면 즉시 실행 가능한 완성형 프롬프트 모음입니다.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- 프롬프트 1 -->
+        <div class="prompt-box">
+          <div class="prompt-header">
+            <div class="prompt-title-text">
+              <span>프롬프트 1. [스마트팜] 올인원 테마 개조</span>
+              <span class="prompt-badge">하드웨어 + 3D 씬 + UI</span>
+            </div>
+            <button class="copy-btn" onclick="copyFullPrompt('p-1', this)">📋 풀 복사</button>
+          </div>
+          <p style="font-size:12px; color:var(--meta-slate); margin-bottom:6px;">토양수분 센서(GP27) + 환기 돔 서보 + 온실 돔 3D 씬을 단번에 생성합니다.</p>
+          <pre class="code-block" id="p-1">당신은 Next.js 14 + Three.js + Zustand + CircuitPython 스마트 IoT 대시보드 전문 개발자입니다.
+우리 플랫폼을 [스마트팜(Smart Farm)] 주제로 개조합니다:
+1. 핀맵: GP27(ADC1)에 토양수분 센서를 추가하고, SG90(GP16)은 온실 환기 돔 개폐기로 용도를 변경합니다.
+2. 3D 공간: 거실 대신 투명 유리 프레임 온실 돔과 화분을 렌더링하고, 서보 각도에 따라 지붕이 열리게 해주세요.
+3. UI: 오른쪽 패널에 토양 수분 게이지와 환기 돔 수동 개폐 슬라이더를 연동해주세요.
+Change Boundary 5개 파일(types/iot.ts, MockIoTAdapter.ts, CONTEXT_MAP, 3D 씬, InspectorPanel)을 순서대로 수정해주세요.</pre>
+        </div>
+
+        <!-- 프롬프트 2 -->
+        <div class="prompt-box">
+          <div class="prompt-header">
+            <div class="prompt-title-text">
+              <span>프롬프트 2. [스마트팩토리] 컨베이어 생산 라인</span>
+              <span class="prompt-badge">초음파 + 분류 푸셔</span>
+            </div>
+            <button class="copy-btn" onclick="copyFullPrompt('p-2', this)">📋 풀 복사</button>
+          </div>
+          <p style="font-size:12px; color:var(--meta-slate); margin-bottom:6px;">초음파 센서(GP17) 물품 감지 및 불량품 선별 서보모터를 연동합니다.</p>
+          <pre class="code-block" id="p-2">당신은 Next.js 14 + R3F + Zustand + CircuitPython 스마트 IoT 대시보드 전문 개발자입니다.
+우리 플랫폼을 [스마트팩토리(Smart Factory)] 공정으로 개조합니다:
+1. 핀맵: GP17에 초음파 거리 센서를 연동하고, 물품 감지(거리 < 8cm) 시 SG90 서보모터(GP16)가 푸셔 암을 90도 작동시킵니다.
+2. 3D 공간: 산업용 컨베이어 벨트와 센서 갠트리를 배치하고 서보모터 회전에 맞춰 암이 밀어내는 모션을 연동해주세요.
+3. UI: 생산 수량 카운터와 불량률 게이지를 추가해주세요.
+Change Boundary 규칙을 준수하여 코드를 제공해주세요.</pre>
+        </div>
+
+        <!-- 프롬프트 3 -->
+        <div class="prompt-box">
+          <div class="prompt-header">
+            <div class="prompt-title-text">
+              <span>프롬프트 3. [센서 추가] 핀맵 & 시뮬레이터 확장</span>
+              <span class="prompt-badge">Zustand + Mock</span>
+            </div>
+            <button class="copy-btn" onclick="copyFullPrompt('p-3', this)">📋 풀 복사</button>
+          </div>
+          <p style="font-size:12px; color:var(--meta-slate); margin-bottom:6px;">신규 센서를 types/iot.ts 및 MockIoTAdapter.ts에 안전하게 등록합니다.</p>
+          <pre class="code-block" id="p-3">신규 하드웨어 센서를 우리 플랫폼의 상태 관리 스토어와 목 어댑터에 등록해주세요:
+- 센서명: [센서이름, 예: CO2 이산화탄소 센서]
+- 핀 번호: GP[핀번호, 예: GP26]
+- 단위: [단위, 예: ppm], 정상 범위: 400 ~ 2000
+1. `src/core/types/iot.ts`의 IoTPlatformState.sensors에 인터페이스를 추가해주세요.
+2. `src/core/adapter/MockIoTAdapter.ts`의 startSimulation 루프에 실감 나는 랜덤 수치 발생기를 추가해주세요.</pre>
+        </div>
+
+        <!-- 프롬프트 4 -->
+        <div class="prompt-box">
+          <div class="prompt-header">
+            <div class="prompt-title-text">
+              <span>프롬프트 4. [3D 가상 공간] 오브젝트 및 메쉬 교체</span>
+              <span class="prompt-badge">Three.js / R3F</span>
+            </div>
+            <button class="copy-btn" onclick="copyFullPrompt('p-4', this)">📋 풀 복사</button>
+          </div>
+          <p style="font-size:12px; color:var(--meta-slate); margin-bottom:6px;">거실 소파와 테이블 대신 우리 팀 프로젝트에 맞는 3D 가구/오브젝트를 만듭니다.</p>
+          <pre class="code-block" id="p-4">React Three Fiber 컴포넌트인 `src/components/3d/SmartHomeRoom.tsx`를 우리 프로젝트에 어울리는 공간으로 리모델링해주세요:
+- 공간 컨셉: [예: 첨단 스마트 헬스케어 병실]
+- 교체 요소: 소파와 테이블 대신 [스마트 환자 침대, 링거 거치대, 모니터링 모니터]를 Three.js 기본 지오메트리(box, cylinder, sphere)로 밝고 부드러운 파스텔 톤으로 모델링해주세요.
+- 주의: Drei <Html> 태그에는 반드시 `zIndexRange={[10, 0]}`와 `!isModalOpen` 조건을 유지해야 합니다.</pre>
+        </div>
+      </div>
+    </article>
+
+    <!-- =========================================================
+         SLIDE 8: UI 레이어링 3대 공식 & 트러블슈팅 FAQ
+         ========================================================= -->
+    <article class="slide-card" id="slide-8">
+      <div class="slide-header">
+        <div class="slide-header-left">
+          <div class="slide-num-pill">
+            <span>STEP 08</span>
+            <span>·</span>
+            <span>UI LAYERING & TROUBLESHOOTING</span>
+          </div>
+          <h2>8. UI 3D 레이어링 3대 원칙 & 트러블슈팅 FAQ</h2>
+          <p class="slide-desc">모달창이 3D 요소에 가려지거나 카메라 시점이 흐트러졌을 때의 완벽 해결 공식과 자주 묻는 질문입니다.</p>
+        </div>
+      </div>
+
+      <div class="meta-box highlight" style="margin-bottom:20px;">
+        <h3>💡 반드시 준수해야 하는 3D UI 레이어링 3대 공식</h3>
+        <ol>
+          <li>
+            <strong>Drei &lt;Html&gt; zIndexRange 제한:</strong>
+            모든 3D 어노테이션 태그에 <code>zIndexRange={[10, 0]}</code>을 지정합니다. Drei 기본값인 1,600만 대신 최대 10으로 제한하여 모달창(z-[100])을 뚫고 올라오는 현상을 차단합니다.
+          </li>
+          <li>
+            <strong>모달 오픈 시 3D 태그 자동 언마운트:</strong>
+            <code>page.tsx</code>의 <code>isModalOpen</code> 상태를 전달받아, 모달이 열려 있을 때는 <code>{!isModalOpen && &lt;Html&gt;...&lt;/Html&gt;}</code>로 3D 뱃지를 즉시 숨깁니다.
+          </li>
+          <li>
+            <strong>카메라 뷰 복귀 & 조감도(Top-down) 토글:</strong>
+            좌측 툴바의 '3D 가상 공간 뷰' 버튼을 누르면 기본 입체 각도로 복귀하며, 좌하단 '전체 조감도' 버튼으로 상공 11m 탑다운 시점을 자유롭게 전환합니다.
+          </li>
+        </ol>
+      </div>
+
+      <div class="grid-2">
+        <div class="meta-box">
+          <h3>Q1. Pico 2 W의 IP 주소를 어떻게 확인하나요?</h3>
+          <p>Pico 2 W를 PC에 USB로 연결한 후 Thonny IDE 시리얼 콘솔을 열고 보드를 리셋(Ctrl+D)하면 터미널에 <code>Wi-Fi Connected! IP: 192.168.x.x</code>가 출력됩니다. 대시보드 좌측 Wi-Fi 모달에 해당 IP를 입력하세요.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>Q2. 공간 목록에서 공간 이름을 어떻게 바꾸나요?</h3>
+          <p>좌측 '스마트 공간 목록'의 각 공간 우측 <strong>[점 3개 아이콘]</strong>을 누르고 <strong>[✏️ 이름 바꾸기]</strong>를 선택하면 전용 팝업이 열려 원하는 팀 명칭으로 즉시 수정할 수 있습니다.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>Q3. CircuitPython에서 CORS 오류가 발생합니다.</h3>
+          <p>브라우저 개발자 도구 콘솔에 CORS 에러가 보이면 <code>firmware/pico2w/code.py</code>의 각 라우트에 <code>[GET, POST, OPTIONS]</code> 메서드가 등록되어 있는지, 그리고 헤더에 <code>Access-Control-Allow-Origin: *</code>가 포함되어 있는지 확인하세요.</p>
+        </div>
+
+        <div class="meta-box">
+          <h3>Q4. 시뮬레이션 모드와 하드웨어 모드는 어떻게 전환하나요?</h3>
+          <p>대시보드 상단 헤더 중앙의 <strong>[시뮬레이션 / 하드웨어] 토글 알약 버튼</strong>을 누르거나, 좌측 Wi-Fi 모달 창에서 원클릭으로 손쉽게 전환할 수 있습니다.</p>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- 3. Bottom Floating Slide Controller Dock -->
+  <footer class="slide-dock">
+    <button class="dock-btn" id="prev-btn" onclick="changeSlide(-1)">
+      ◀ 이전
+    </button>
+
+    <div class="dock-dots" id="dock-dots-container">
+      <div class="dock-dot active" onclick="goToSlide(1)">1</div>
+      <div class="dock-dot" onclick="goToSlide(2)">2</div>
+      <div class="dock-dot" onclick="goToSlide(3)">3</div>
+      <div class="dock-dot" onclick="goToSlide(4)">4</div>
+      <div class="dock-dot" onclick="goToSlide(5)">5</div>
+      <div class="dock-dot" onclick="goToSlide(6)">6</div>
+      <div class="dock-dot" onclick="goToSlide(7)">7</div>
+      <div class="dock-dot" onclick="goToSlide(8)">8</div>
+    </div>
+
+    <div class="dock-info" id="dock-page-counter">
+      1 / 8
+    </div>
+
+    <button class="dock-btn" id="next-btn" onclick="changeSlide(1)">
+      다음 ▶
+    </button>
+
+    <button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면 발표 모드 (F키)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+  </footer>
+
+  <!-- 4. Client Presentation Controller Script -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+    let isScrollMode = false;
+
+    function updateSlideView() {
+      // Update Slide visibility
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        if (slide) {
+          if (i === currentSlide) {
+            slide.classList.add('active');
+          } else {
+            slide.classList.remove('active');
+          }
+        }
+      }
+
+      // Update Top Header Counter
+      const headerIndicator = document.getElementById('header-step-indicator');
+      if (headerIndicator) {
+        headerIndicator.innerHTML = `<span>STEP 0${currentSlide}</span><span style="color:var(--meta-slate);">/</span><span>0${totalSlides}</span>`;
+      }
+
+      // Update Top Progress Bar
+      const progressFill = document.getElementById('progress-fill');
+      if (progressFill) {
+        const pct = (currentSlide / totalSlides) * 100;
+        progressFill.style.width = pct + '%';
+      }
+
+      // Update Dock Counter & Buttons
+      const pageCounter = document.getElementById('dock-page-counter');
+      if (pageCounter) {
+        pageCounter.innerText = `${currentSlide} / ${totalSlides}`;
+      }
+
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      if (prevBtn) prevBtn.disabled = (currentSlide === 1);
+      if (nextBtn) nextBtn.disabled = (currentSlide === totalSlides);
+
+      // Update Dots
+      const dots = document.querySelectorAll('.dock-dot');
+      dots.forEach((dot, idx) => {
+        if (idx + 1 === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      // Smooth scroll to top of slide
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changeSlide(direction) {
+      if (isScrollMode) return;
+      const next = currentSlide + direction;
+      if (next >= 1 && next <= totalSlides) {
+        currentSlide = next;
+        updateSlideView();
+      }
+    }
+
+    function goToSlide(slideNum) {
+      if (isScrollMode) {
+        const target = document.getElementById(`slide-${slideNum}`);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      if (slideNum >= 1 && slideNum <= totalSlides) {
+        currentSlide = slideNum;
+        updateSlideView();
+      }
+    }
+
+    function toggleScrollMode() {
+      isScrollMode = !isScrollMode;
+      const body = document.body;
+      const btn = document.getElementById('scroll-toggle-btn');
+      if (isScrollMode) {
+        body.classList.add('scroll-mode');
+        btn.innerHTML = '<span>🖥️ 슬라이드 모드로 전환</span>';
+      } else {
+        body.classList.remove('scroll-mode');
+        btn.innerHTML = '<span>📄 전체 스크롤 모드</span>';
+        updateSlideView();
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn('Fullscreen request failed:', err);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard Shortcuts (Arrow Left, Arrow Right, Spacebar, F)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        e.preventDefault();
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        changeSlide(-1);
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    // Master Context Copy Function
+    function copyMasterContext(btn) {
+      const text = `# PLATFORM_FULL_CONTEXT: 3D IoT 대시보드 플랫폼 전체 마스터 컨텍스트
+
+이 문서는 학생 팀 프로젝트용 '스마트홈 3D IoT 공통 개발 플랫폼'의 전체 아키텍처, 데이터 흐름, 핵심 파일 코드 및 확장 규칙을 단 하나의 문서로 집약한 AI 마스터 지식 베이스(Master Knowledge Base)입니다.
+생성형 AI(ChatGPT, Claude, Gemini, Antigravity 등)에게 이 문서 전문을 입력하면, AI가 프로젝트 전체 구조를 100% 파악하여 환각 없이 완벽하게 작동하는 코드를 생성할 수 있습니다.
 
 ---
 
@@ -377,1498 +1404,50 @@
 ---
 
 ## 2. 전체 파일 구조 및 역할 분담 (Change Boundary)
-
-3D_IoT_Dashboard_Platform/
-├── firmware/circuitpython/
-│   ├── code.py                 # [★수정 대상] Pico 2 W CircuitPython 메인 펌웨어
-│   ├── settings.toml           # Wi-Fi SSID / PASSWORD
-│   └── README.md
-│
-├── src/
-│   ├── core/
-│   │   ├── types/iot.ts        # [★수정 대상] 센서, 액추에이터, 스토어 타입 정의
-│   │   ├── store/useIoTStore.ts# [기반 파일] 2-Phase Acknowledgment, 로그, 상태 관리
-│   │   └── adapter/
-│   │       ├── IIoTAdapter.ts  # [기반 파일] 어댑터 인터페이스
-│   │       ├── MockIoTAdapter.ts # [★수정 대상] 가상 센서 난수 발생기
-│   │       └── CircuitPythonAdapter.ts # [기반 파일] Pico 2 W HTTP 통신기
-│   │
-│   ├── components/
-│   │   ├── 3d/
-│   │   │   ├── SceneCanvas.tsx   # [기반 파일] R3F Canvas 래퍼 (조도 동적 연동)
-│   │   │   ├── SmartHomeRoom.tsx # [★수정 대상] 3D 가상 공간 룸 메쉬 (방/온실/공장)
-│   │   │   ├── DoorObject.tsx    # 서보모터 연동 도어 메쉬
-│   │   │   ├── LightObject.tsx   # RGB LED 연동 조명 메쉬
-│   │   │   ├── DhtSensorBadge.tsx# DHT11 온습도 3D 플로팅 배지
-│   │   │   ├── CdsSensorNode.tsx # Cds 조도 센서 메쉬
-│   │   │   └── CameraRig.tsx     # 카메라 컨트롤러
-│   │   │
-│   │   └── ui/
-│   │       ├── NavRail.tsx           # 좌측 최외곽 기능 네비게이션 레일 (텔레메트리/스케줄/장치관리/매뉴얼)
-│   │       ├── RoomsSidebar.tsx      # 공간 목록 사이드바 및 모달 런처 (+ 새 공간 추가, 장치 관리, 자동화 스케줄)
-│   │       ├── CenterHeader.tsx      # 중앙 상단 공간 탭, 센서 새로고침, 카메라 리셋, 단축키 툴팁
-│   │       ├── InspectorPanel.tsx    # 우측 3단 멀티탭 인스펙터 (장치 제어 / 센서 출력 / 제어 로그)
-│   │       ├── SensorOutputPanel.tsx # [신규] 실시간 센서 게이지, Raw ADC 스트림, CSV 내보내기 패널
-│   │       ├── ControlLogPanel.tsx   # [신규] 카테고리별(하드웨어/사용자/시뮬레이터/시스템) 실시간 제어 로그 스트림
-│   │       ├── DeviceManageModal.tsx # [신규] 4대 핀아웃(GP15, GP16, GP18~20, GP26) 상태 점검 및 테스트 모달
-│   │       ├── ScheduleModal.tsx     # [신규] 5대 이벤트 구동 자동화 규칙 토글 모달
-│   │       ├── AddRoomModal.tsx      # [신규] 팀별 프로젝트 새 가상 공간 추가 모달
-│   │       ├── ReviewModal.tsx       # [신규] 3D 이상치 감지 시 승인 대기 검토 모달
-│   │       └── PromptBar.tsx         # [신규] 지능형 한국어 자연어 명령 파서 및 퀵 액션 칩
-│   │
-│   └── app/
-│       ├── layout.tsx            # 루트 레이아웃 & IoTProvider
-│       └── page.tsx              # 스마트홈 3D 통합 관제 대시보드 메인 페이지
-
-규칙: 학생들이 팀별 주제(스마트팜, 스마트팩토리 등)를 바꿀 때 수정하는 파일은 주로 다음 4개 핵심 파일입니다:
-1. firmware/circuitpython/code.py
-2. src/core/types/iot.ts
-3. src/core/adapter/MockIoTAdapter.ts
-4. src/components/3d/SmartHomeRoom.tsx (또는 신규 씬 컴포넌트) + src/components/ui/InspectorPanel.tsx 또는 SensorOutputPanel.tsx
+1. \`context/CONTEXT_CIRCUITPYTHON_MAP.md\`: 신규 센서/액추에이터 GPIO 핀 및 REST 핸들러 명세
+2. \`src/core/types/iot.ts\`: 센서/액추에이터 TypeScript 인터페이스 정의
+3. \`src/core/adapter/MockIoTAdapter.ts\`: 시뮬레이션 가상 데이터 생성기
+4. \`src/components/3d/\`: Three.js 3D 가상 공간 씬 컴포넌트 (SmartHomeRoom, SmartFarmRoom, SmartFactoryRoom 등)
+5. \`src/components/ui/InspectorPanel.tsx\` & \`SensorOutputPanel.tsx\`: 센서 게이지 및 액추에이터 제어 위젯
 
 ---
 
-## 3. 핵심 파일 1: 도메인 타입 정의 (src/core/types/iot.ts) 전문
+## 3. 4종 기본 레퍼런스 하드웨어 핀맵
+1. DHT11 온습도 센서: GP15 (디지털 단선 버스) -> 3D 실내 수치 뱃지 연동
+2. Cds 조도 센서: GP26 (ADC0 아날로그) -> 3D 앰비언트 자연광 조도 연동
+3. SG90 서보모터: GP16 (50Hz PWM) -> 3D 스마트 도어 및 온실 돔 개폐 각도 연동
+4. RGB LED: GP18, GP19, GP20 (3채널 PWM) -> 3D 펜던트 조명 발광 색상 연동`;
 
-export type ConnectionState = 'connected' | 'connecting' | 'disconnected' | 'error';
-export type PlatformMode = 'simulation' | 'hardware';
-
-export interface SensorData {
-  deviceId: string;
-  name: string;
-  value: number;
-  unit: string;
-  updatedAt: number;     // ms timestamp
-  isStale: boolean;       // 10초 이상 미수신 시 true
-  minWarning?: number;
-  maxWarning?: number;
-}
-
-export interface ServoActuatorData {
-  deviceId: string;
-  name: string;
-  targetAngle: number;    // 0 ~ 180도
-  reportedAngle: number;  // 0 ~ 180도
-  pending: boolean;
-  lastCommandAt?: number;
-  errorMessage?: string;
-}
-
-export interface RgbActuatorData {
-  deviceId: string;
-  name: string;
-  targetColor: string;    // Hex code, e.g. "#FF5500"
-  reportedColor: string;
-  targetState: 'ON' | 'OFF';
-  reportedState: 'ON' | 'OFF';
-  pending: boolean;
-  lastCommandAt?: number;
-  errorMessage?: string;
-}
-
-export interface IoTPlatformState {
-  mode: PlatformMode;
-  connectionState: ConnectionState;
-  picoIpAddress: string;
-  selectedDeviceId: string | null;
-  isExhibitionMode: boolean;
-  isAutoRotate: boolean;
-
-  sensors: {
-    dht11_temp: SensorData;
-    dht11_humi: SensorData;
-    cds_light: SensorData;
-  };
-
-  actuators: {
-    sg90_door: ServoActuatorData;
-    rgb_light: RgbActuatorData;
-  };
-
-  logs: LogEntry[];
-
-  // Actions
-  setMode: (mode: PlatformMode) => void;
-  setPicoIpAddress: (ip: string) => void;
-  setConnectionState: (state: ConnectionState) => void;
-  setSelectedDevice: (deviceId: string | null) => void;
-  setExhibitionMode: (enabled: boolean) => void;
-  setAutoRotate: (enabled: boolean) => void;
-
-  updateSensor: (id: 'dht11_temp' | 'dht11_humi' | 'cds_light', value: number) => void;
-  setServoAngle: (angle: number) => Promise<boolean>;
-  setRgbColor: (color: string) => Promise<boolean>;
-  setRgbState: (state: 'ON' | 'OFF') => Promise<boolean>;
-
-  confirmServoAck: (angle: number) => void;
-  confirmRgbAck: (color: string, state: 'ON' | 'OFF') => void;
-  failCommand: (actuatorId: 'sg90_door' | 'rgb_light', errorMessage: string) => void;
-  addLog: (type: LogEntry['type'], message: string, source?: LogEntry['source']) => void;
-  clearLogs: () => void;
-  checkStaleSensors: () => void;
-}
-
----
-
-## 4. 핵심 파일 2: 상태 관리 스토어 (src/core/store/useIoTStore.ts) 동작 규칙
-
-- 스토어는 2-Phase 제어를 구현합니다:
-  - UI에서 setServoAngle(90) 호출 시, pending = true가 되며 버튼이 비활성화됩니다.
-  - 어댑터가 하드웨어 또는 시뮬레이터로부터 성공 응답을 받으면 confirmServoAck(90)을 호출하여 reportedAngle = 90, pending = false로 확정됩니다.
-  - 센서 갱신은 updateSensor(id, value)를 호출하면 updatedAt = Date.now()와 함께 즉시 3D 배지와 UI에 반영됩니다.
-
----
-
-## 5. 핵심 파일 3: CircuitPython 메인 펌웨어 (firmware/circuitpython/code.py) 전문
-
-import os, time, board, analogio, pwmio, wifi, socketpool
-from adafruit_motor import servo
-import adafruit_dht
-from adafruit_httpserver import Server, Request, Response, JSONResponse, POST, GET, OPTIONS
-
-dht = adafruit_dht.DHT11(board.GP15)
-cds = analogio.AnalogIn(board.GP26)
-servo_pwm = pwmio.PWMOut(board.GP16, duty_cycle=2 ** 15, frequency=50)
-my_servo = servo.Servo(servo_pwm, min_pulse=500, max_pulse=2400)
-current_servo_angle = 0
-my_servo.angle = current_servo_angle
-
-red_pwm = pwmio.PWMOut(board.GP18, frequency=1000)
-green_pwm = pwmio.PWMOut(board.GP19, frequency=1000)
-blue_pwm = pwmio.PWMOut(board.GP20, frequency=1000)
-current_rgb_color = "#3B82F6"
-current_rgb_state = "ON"
-
-def apply_rgb(hex_code, state):
-    global current_rgb_color, current_rgb_state
-    current_rgb_color = hex_code
-    current_rgb_state = state
-    if state == "OFF":
-        red_pwm.duty_cycle = green_pwm.duty_cycle = blue_pwm.duty_cycle = 0
-        return
-    clean = hex_code.lstrip("#")
-    if len(clean) == 6:
-        r = int(clean[0:2], 16) / 255.0
-        g = int(clean[2:4], 16) / 255.0
-        b = int(clean[4:6], 16) / 255.0
-        red_pwm.duty_cycle = int(r * 65535)
-        green_pwm.duty_cycle = int(g * 65535)
-        blue_pwm.duty_cycle = int(b * 65535)
-
-wifi.radio.connect(os.getenv("CIRCUITPY_WIFI_SSID"), os.getenv("CIRCUITPY_WIFI_PASSWORD"))
-pool = socketpool.SocketPool(wifi.radio)
-server = Server(pool, "/static", debug=True)
-
-CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-}
-
-@server.route("/api/status", [GET, OPTIONS])
-def handle_status(request: Request):
-    if request.method == "OPTIONS": return Response(request, headers=CORS_HEADERS)
-    temp = humi = 0
-    try: temp, humi = dht.temperature or 24.0, dht.humidity or 50.0
-    except: temp, humi = 24.0, 50.0
-    return JSONResponse(request, {
-        "status": "online", "temperature": temp, "humidity": humi,
-        "light_adc": cds.value, "servo_angle": current_servo_angle,
-        "rgb_color": current_rgb_color, "rgb_state": current_rgb_state
-    }, headers=CORS_HEADERS)
-
-@server.route("/api/servo", [POST, OPTIONS])
-def handle_servo(request: Request):
-    global current_servo_angle
-    if request.method == "OPTIONS": return Response(request, headers=CORS_HEADERS)
-    body = request.json()
-    angle = max(0, min(180, int(body.get("angle", 0))))
-    my_servo.angle = angle
-    current_servo_angle = angle
-    return JSONResponse(request, {"success": True, "servo_angle": angle}, headers=CORS_HEADERS)
-
-@server.route("/api/rgb", [POST, OPTIONS])
-def handle_rgb(request: Request):
-    if request.method == "OPTIONS": return Response(request, headers=CORS_HEADERS)
-    body = request.json()
-    apply_rgb(body.get("color", current_rgb_color), body.get("state", current_rgb_state))
-    return JSONResponse(request, {"success": True, "color": current_rgb_color, "state": current_rgb_state}, headers=CORS_HEADERS)
-
-server.start(str(wifi.radio.ipv4_address), port=80)
-while True:
-    server.poll()
-    time.sleep(0.01)
-
----
-
-## 6. 핵심 파일 4: 시뮬레이터 (src/core/adapter/MockIoTAdapter.ts) 전문
-
-import { IIoTAdapter } from './IIoTAdapter';
-import { useIoTStore } from '../store/useIoTStore';
-
-export class MockIoTAdapter implements IIoTAdapter {
-  private sensorInterval: NodeJS.Timeout | null = null;
-  private staleCheckInterval: NodeJS.Timeout | null = null;
-
-  init(): void {
-    const store = useIoTStore.getState();
-    store.setConnectionState('connected');
-
-    this.sensorInterval = setInterval(() => {
-      if (useIoTStore.getState().mode !== 'simulation') return;
-      const s = useIoTStore.getState().sensors;
-      const newTemp = Math.round(Math.min(32, Math.max(18, s.dht11_temp.value + (Math.random() - 0.48) * 0.4)) * 10) / 10;
-      const newHumi = Math.round(Math.min(75, Math.max(30, s.dht11_humi.value + (Math.random() - 0.49) * 0.8)) * 10) / 10;
-      const newLight = Math.min(62000, Math.max(15000, s.cds_light.value + Math.floor((Math.random() - 0.5) * 1200)));
-
-      useIoTStore.getState().updateSensor('dht11_temp', newTemp);
-      useIoTStore.getState().updateSensor('dht11_humi', newHumi);
-      useIoTStore.getState().updateSensor('cds_light', newLight);
-    }, 2000);
-
-    this.staleCheckInterval = setInterval(() => {
-      useIoTStore.getState().checkStaleSensors();
-    }, 5000);
-  }
-
-  destroy(): void {
-    if (this.sensorInterval) clearInterval(this.sensorInterval);
-    if (this.staleCheckInterval) clearInterval(this.staleCheckInterval);
-  }
-
-  async sendServoCommand(angle: number): Promise<boolean> {
-    const store = useIoTStore.getState();
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        store.confirmServoAck(angle);
-        resolve(true);
-      }, 350);
-    });
-  }
-
-  async sendRgbCommand(color: string, state: 'ON' | 'OFF'): Promise<boolean> {
-    const store = useIoTStore.getState();
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        store.confirmRgbAck(color, state);
-        resolve(true);
-      }, 200);
-    });
-  }
-}
-
----
-
-## 7. 새 주제(예: 스마트팜) 변경 시 따라야 할 4단계 표준 프로토콜
-
-1. Step 1 (CircuitPython 펌웨어):
-   firmware/circuitpython/code.py에서 불필요한 센서를 제거하고 새 센서(예: 토양수분 board.GP27)를 초기화한 후, /api/status 반환 JSON에 필드를 추가합니다.
-2. Step 2 (프론트엔드 타입 정의):
-   src/core/types/iot.ts의 sensors 객체에 새 센서 ID(soil_moisture 등)를 추가하고, updateSensor 액션의 허용 ID 유니온 타입에 등록합니다.
-3. Step 3 (시뮬레이터 난수 갱신):
-   src/core/adapter/MockIoTAdapter.ts의 setInterval 내부에 새 센서의 자연스러운 변동 난수 계산식을 추가하고 updateSensor(...)를 호출합니다.
-4. Step 4 (3D 가상 공간 및 UI 연동):
-   src/components/3d/에 새 씬 컴포넌트(예: SmartFarmRoom.tsx)를 생성하고, SmartHomeRoom.tsx를 교체합니다.
-   src/components/ui/SensorOutputPanel.tsx 및 InspectorPanel.tsx에서 새 센서 수치를 표시하는 게이지 및 제어 위젯을 추가합니다.
-
----
-
-## 8. 핵심 엔지니어링 원칙: 3D 레이어링 & 하드웨어 에러 제어
-
-### [1. Drei <Html> Z-Index 간섭 방지 및 Auto-Dismiss 패턴]
-- Three.js 씬 내부에 2D UI(말풍선, 배지 등)를 띄울 때는 @react-three/drei의 <Html>을 사용합니다.
-- <Html>은 기본적으로 z-index를 1,600만 대의 매우 큰 값으로 부여하므로, 일반적인 CSS 모달(z-50)이 가려지는 문제가 발생합니다.
-- 해결 공식:
-  1. <Html zIndexRange={[10, 0]}>로 3D 오버레이의 최대 z-index를 10 이하로 제한합니다.
-  2. 모달 컨테이너의 z-index를 z-[100] 이상으로 설정합니다.
-  3. 모달 열림 플래그(isModalOpen)를 3D 컴포넌트에 prop으로 전달하여 모달 활성화 시 말풍선을 즉시 null로 언마운트합니다.
-  4. '승인 완료'와 같은 일회성 알림은 setTimeout(..., 4500)으로 자동 소멸 처리하고 수동 ✕ 닫기 버튼을 반드시 제공합니다.
-
-### [2. CircuitPython REST 연동 시 에러 머신 및 Stale 센서 감지]
-- CircuitPythonAdapter.ts는 다음 원칙으로 네트워크 예외를 방어합니다:
-  1. IP 주소 입력 시 http:// 접두사와 끝 슬래시를 자동 제거 정규화합니다.
-  2. 요청 실패 시 store.connectionState !== 'error' 조건으로 즉시 에러 상태로 전이하여 무한 대기(스피너 영구 고착)를 방지합니다.
-  3. 5초 주기의 staleCheckInterval을 구동하여 10초 이상 미수신 센서를 즉시 오프라인(isStale: true)으로 처리합니다.
-  4. 학교 실습실이나 오프라인 환경에서는 node firmware/mock_pico_server.js를 구동하여 100% 동일한 하드웨어 REST 통신을 모의 검증할 수 있습니다.</textarea>
-      </div>
-    </section>
-
-    <!-- 1. 플랫폼 개요 -->
-    <section id="sec-overview">
-      <h2>1. 플랫폼 및 스마트홈 베이스라인 개요</h2>
-      <p>
-        본 플랫폼은 고등학교 학생들이 팀별 IoT 프로젝트를 수행할 수 있도록 제공되는 <strong>완전한 공통 개발용 베이스라인(Starter Platform)</strong>입니다.
-        웹 브라우저의 3D 가상 공간에서부터 Raspberry Pi Pico 2 W 물리 장치 제어까지 100% 정상 작동하는 기본 스마트홈 코드가 탑재되어 있습니다.
-      </p>
-
-      <div class="grid-2">
-        <div class="card">
-          <h3 style="color: #60a5fa; margin-top:0;">환경 센서 (Read)</h3>
-          <ul>
-            <li><strong>DHT11 (GP15)</strong>: 실내 온도(℃)와 습도(%)를 측정하여 3D 공간 상단 플로팅 배지와 대시보드에 실시간 표시</li>
-            <li><strong>Cds 조도센서 (GP26 / A0)</strong>: 주변 밝기를 측정하여 3D 방의 환경광(Ambient Light) 밝기를 동적으로 자동 조절</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3 style="color: #34d399; margin-top:0;">제어 액추에이터 (Write & Ack)</h3>
-          <ul>
-            <li><strong>SG90 서보모터 (GP16)</strong>: 스마트 도어 개폐 각도(0° 닫힘 ~ 90° 열림)를 제어하고 3D 도어 메쉬를 부드럽게 회전</li>
-            <li><strong>RGB LED (GP18, GP19, GP20)</strong>: 컬러 피커로 색상을 지정하면 3D 방 천장 펜던트 조명이 동일한 색상으로 발광</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. 하드웨어 결선 & CircuitPython -->
-    <section id="sec-hardware">
-      <h2>2. 하드웨어 결선 & CircuitPython 1분 세팅</h2>
-      <p>
-        Pico 2 W는 복잡한 IDE(Thonny 등)가 필요 없습니다. <strong>CircuitPython</strong>을 사용하면 USB 메모리처럼 <code>code.py</code> 파일만 복사·저장하면 즉시 코드가 실행됩니다!
-      </p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>부품명</th>
-            <th>Pico 2 W 핀</th>
-            <th>신호 형태</th>
-            <th>결선 가이드</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>DHT11 (온습도)</strong></td>
-            <td><code>GP15</code></td>
-            <td>디지털</td>
-            <td>VCC(3.3V), GND, DATA(GP15) 연결</td>
-          </tr>
-          <tr>
-            <td><strong>Cds (조도센서)</strong></td>
-            <td><code>GP26</code> (ADC0)</td>
-            <td>아날로그</td>
-            <td>10kΩ 저항과 함께 전압분배 회로 구성 후 GP26에 연결</td>
-          </tr>
-          <tr>
-            <td><strong>SG90 (서보모터)</strong></td>
-            <td><code>GP16</code></td>
-            <td>50Hz PWM</td>
-            <td>VCC(5V VBUS), GND, SIGNAL(GP16) 연결</td>
-          </tr>
-          <tr>
-            <td><strong>RGB LED</strong></td>
-            <td><code>GP18, GP19, GP20</code></td>
-            <td>PWM 출력</td>
-            <td>공통 캐소드(GND), Red(GP18), Green(GP19), Blue(GP20)</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="card">
-        <h3>초간단 3단계 설치법:</h3>
-        <ol>
-          <li>Pico 2 W의 <strong>BOOTSEL 버튼</strong>을 누른 채로 PC USB에 꽂으면 <code>RPI-RP2</code> 드라이브가 뜹니다.</li>
-          <li>CircuitPython 공식 UF2 파일을 드라이브에 넣으면 <code>CIRCUITPY</code> 드라이브로 재부팅됩니다.</li>
-          <li>프로젝트의 <code>firmware/circuitpython/</code>에 있는 <code>code.py</code>와 <code>settings.toml</code>을 <code>CIRCUITPY</code> 드라이브에 복사하세요!</li>
-        </ol>
-      </div>
-
-      <!-- 2-2. 실물 보드 없이 하드웨어 모드 100% 모의 연동 테스트하기 (신규) -->
-      <div class="card" style="border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.08);">
-        <h3 style="color: #34d399; margin-top:0;">⚡ [핵심] 실물 Pico 보드가 없어도 100% 하드웨어 모드 테스트하기 (Mock 에뮬레이터)</h3>
-        <p>
-          실물 Pico 2 W 장비가 없거나, 학교 실습실 Wi-Fi 보안(AP 격리)으로 Pico와 PC 간 통신이 어려울 때는 
-          프로젝트에 내장된 <strong>Node.js 모의 서버(Mock Server)</strong>를 실행하여 실제 하드웨어와 100% 동일하게 REST 통신을 테스트할 수 있습니다!
-        </p>
-        <div style="background: #0f172a; padding: 14px 18px; border-radius: 8px; border: 1px solid #334155; margin: 12px 0;">
-          <p style="margin: 0 0 6px 0; color: #94a3b8; font-size: 12px; font-weight: 700;">터미널에서 모의 하드웨어 서버 실행:</p>
-          <code style="color: #38bdf8; font-size: 14px; background: transparent; padding: 0;">node firmware/mock_pico_server.js</code>
-        </div>
-        <ul style="margin-bottom: 0;">
-          <li><strong>IP 주소 입력</strong>: 대시보드 상단 <strong>[Pico 2 W 연결 설정]</strong> 모달에서 IP 주소로 <code>127.0.0.1:5050</code>을 입력하고 <strong>[하드웨어 연동]</strong> 모드를 켭니다.</li>
-          <li><strong>동작 원리</strong>: 브라우저 -> Next.js 프록시(<code>/api/pico/[...path]</code>) -> 모의 서버(5050 포트)로 전달되어 CORS 문제 없이 온습도/조도 폴링 및 서보모터/LED 제어 ACK가 실시간 동작합니다.</li>
-          <li><strong>네트워크 장애 복구(Failover)</strong>: IP를 잘못 입력하면 화면이 멈추지 않고 빨간색 '오류' 상태로 안전하게 전환되며, 올바른 주소로 수정 시 새로고침 없이 즉시 정상 복구됩니다.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- 3. 바이브 코딩 & Context 원리 -->
-    <section id="sec-vibe-core">
-      <h2>3. 왜 AI가 엉뚱한 코드를 짤까? (Context 엔지니어링의 정석)</h2>
-
-      <div class="alert-box">
-        <strong>🚨 학생들이 가장 많이 겪는 실패 원인:</strong><br>
-        ChatGPT나 Claude, Gemini 웹사이트에 가서 <em>"우리 프로젝트 스마트팜으로 바꿔줘"</em>라고 한 문장만 말하면, AI는 여러분 컴퓨터에 있는 <code>code.py</code>나 <code>useIoTStore.ts</code>가 어떻게 생겼는지 <strong>전혀 볼 수 없습니다!</strong><br>
-        그 결과, AI는 인터넷에 있는 아무 코드나 상상해서 짜주기 때문에 <strong>빨간 줄(에러)이 잔뜩 생기거나 3D 화면이 먹통</strong>이 됩니다.
-      </div>
-
-      <div class="solution-box">
-        <strong>✅ 해결 비결: "마스터 Context 학습 + 구체적 요구사항" 2단계 전략!</strong><br>
-        <ol style="margin-top: 8px;">
-          <li><strong>1단계 (뇌 이식):</strong> 대화 시작 시 상단의 <strong>[플랫폼 전체 마스터 컨텍스트 복사하기]</strong>를 눌러 AI에게 우리 프로젝트 전체 구성을 알려줍니다.</li>
-          <li><strong>2단계 (요청):</strong> 그 다음 아래 5번 섹션의 <strong>[프롬프트 1. 스마트팜 변경]</strong> 버튼을 눌러 원하는 기능 변경을 요청합니다.</li>
-        </ol>
-        이렇게 하면 AI가 <code>useIoTStore</code>의 액션 이름과 <code>code.py</code>의 REST 엔드포인트를 정확히 알고 완벽한 코드를 만들어냅니다!
-      </div>
-    </section>
-
-    <!-- 4. 주제 변경 레시피 -->
-    <section id="sec-recipes">
-      <h2>4. 팀별 프로젝트 주제 변경 실전 레시피</h2>
-
-      <!-- 레시피 1 -->
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <h3 style="color: #60a5fa; margin:0;">레시피 1: [스마트팜(Smart Farm)]으로 변경하기</h3>
-          <span style="font-size:12px; color:#10b981; font-weight:700;">★ 레퍼런스 예시 코드 제공됨</span>
-        </div>
-        <p>
-          스마트홈의 DHT11(온습도)을 <strong>토양 수분 센서(Soil Moisture)</strong>로 교체하고, SG90 서보모터를 <strong>온실 환기 돔 개폐기</strong>로 변경하며, 3D 가상 공간을 <strong>온실 돔과 식물 화분</strong>으로 바꾸는 절차입니다.
-        </p>
-
-        <h4 style="font-size:13px; color:#cbd5e1; margin:12px 0 6px 0;">수정해야 할 핵심 4개 파일 체크리스트:</h4>
-        <ol>
-          <li><span class="file-tag">firmware/circuitpython/code.py</span>: <code>GP27(ADC1)</code>에 토양수분센서 객체 생성 및 <code>/api/status</code> JSON에 <code>soil_moisture</code> 추가</li>
-          <li><span class="file-tag">src/core/types/iot.ts</span>: <code>soil_moisture</code> 센서 인터페이스 추가</li>
-          <li><span class="file-tag">src/core/adapter/MockIoTAdapter.ts</span>: 토양수분(30% ~ 80%) 시뮬레이션 난수 발생기 추가</li>
-          <li><span class="file-tag">src/components/3d/SmartHomeRoom.tsx</span>: 온실 유리 돔, 배양토, 식물 메쉬 및 환기 돔 회전 애니메이션 구현</li>
-        </ol>
-
-        <div class="alert-box" style="margin-top: 14px;">
-          <strong>📁 이미 완성된 스마트팜 예시 코드가 프로젝트에 들어있습니다!</strong><br>
-          프로젝트 내 <code>context/examples/smart_farm/</code> 폴더를 열어보세요:<br>
-          - <code>context/examples/smart_farm/code.py</code> (토양수분 펌웨어)<br>
-          - <code>context/examples/smart_farm/SmartFarmRoom.tsx</code> (3D 온실 컴포넌트)<br>
-          AI 없이도 이 파일들을 직접 복사해서 쓸 수 있습니다!
-        </div>
-      </div>
-
-      <!-- 레시피 2 -->
-      <div class="card">
-        <h3 style="color: #34d399; margin-top:0;">레시피 2: [스마트팩토리(Smart Factory)]로 변경하기</h3>
-        <p>1) <strong>하드웨어</strong>: Cds 조도 센서 또는 초음파 센서로 물품 통과를 감지하고, 서보모터를 '물품 분류 푸셔(Pusher)' 암으로 제어합니다. RGB LED는 공장 정상(초록)/대기(노랑)/비상정지(빨강) 3단 경고등 역할을 합니다.</p>
-        <p>2) <strong>3D 씬</strong>: 금속 컨베이어 벨트 메쉬를 3D 공간에 배치하고, 물품 상자가 이동할 때 서보모터 푸셔가 밀어내는 애니메이션을 연동합니다.</p>
-      </div>
-    </section>
-
-    <!-- 5. 대시보드 UI 기능 구현 & 팀별 커스터마이징 완전 정복 가이드 -->
-    <section id="sec-ui-features">
-      <h2>⭐ 5. 대시보드 UI 기능 구현 & 팀별 커스터마이징 가이드</h2>
-      <p>
-        본 대시보드는 현업 수준의 3D 디지털 트윈 관제 센터 디자인(좌측 내비게이션 레일, 공간 사이드바, 중앙 3D 뷰포트, 우측 3단 멀티탭 인스펙터, 하단 지능형 프롬프트 바)을 갖추고 있습니다.<br>
-        초기 화면에서 단순 버튼 형태였던 <strong>모든 UI 요소(센서 출력, 제어 로그, 장치 관리, 자동화 스케줄, 새 공간 추가, 상태 검토, 프롬프트 명령)</strong>가 100% 정상 동작하도록 완성되었으며, 학생들이 팀별 프로젝트(스마트팜, 스마트팩토리, 스마트물류/보안 등)에 맞춰 직접 기능을 추가하거나 개조할 수 있도록 구현 원리와 수정 절차를 상세히 안내합니다.
-      </p>
-
-      <!-- 5-1. UI 버튼 & 기능 아키텍처 일람표 -->
-      <div class="card">
-        <h3 style="color: #60a5fa; margin-top:0;">5-1. 대시보드 UI 인터랙션 & 버튼 아키텍처 일람표</h3>
-        <p>어떤 UI 요소가 어디에 위치하고, 클릭 시 어떤 컴포넌트와 상태(State)가 연동되어 동작하는지 정리한 전체 맵입니다:</p>
-        <table>
-          <thead>
-            <tr>
-              <th>UI 영역</th>
-              <th>버튼 / 요소 이름</th>
-              <th>연결 컴포넌트 & 파일 위치</th>
-              <th>작동 메커니즘 및 기능</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>좌측 최외곽 레일</strong><br>(NavRail)</td>
-              <td>📊 센서 출력 (telemetry)<br>⚙️ 장치 관리 (devices)<br>📅 자동화 스케줄 (schedule)<br>📖 매뉴얼 (manual)</td>
-              <td><span class="file-tag">src/components/ui/NavRail.tsx</span></td>
-              <td>
-                - <code>telemetry</code>: 우측 패널을 [센서 출력] 탭으로 즉시 전환<br>
-                - <code>devices</code>: 4대 핀아웃 [장치 관리 모달] 팝업 호출<br>
-                - <code>schedule</code>: 5대 이벤트 규칙 [자동화 스케줄 모달] 팝업 호출<br>
-                - <code>manual</code>: 본 실전 매뉴얼(manual.html) 새 창 오픈
-              </td>
-            </tr>
-            <tr>
-              <td><strong>공간 사이드바</strong><br>(RoomsSidebar)</td>
-              <td>➕ 새 공간 추가 버튼<br>🏠 공간 목록 카드 클릭<br>🔧 장치 관리 버튼<br>📅 자동화 스케줄 카드</td>
-              <td><span class="file-tag">src/components/ui/RoomsSidebar.tsx</span><br><span class="file-tag">src/components/ui/AddRoomModal.tsx</span></td>
-              <td>
-                - <code>+ 새 공간 추가</code>: [새 공간 추가 모달]을 띄워 공간명과 카테고리(거실, 침실, 온실, 공장 등)를 입력받아 사이드바 목록에 동적 추가<br>
-                - 공간 카드 선택: <code>selectedRoomId</code> 상태 변경 및 해당 방 3D 카메라 줌인<br>
-                - 하단 [장치 관리] / [자동화 스케줄]: 원클릭 팝업 모달 호출
-              </td>
-            </tr>
-            <tr>
-              <td><strong>중앙 3D 뷰어 상단</strong><br>(CenterHeader)</td>
-              <td>🔄 센서 새로고침 (⟳)<br>🎯 카메라 초기화 (⌖)<br>❓ 단축키 안내 (?)</td>
-              <td><span class="file-tag">src/components/ui/CenterHeader.tsx</span></td>
-              <td>
-                - <code>센서 새로고침</code>: Pico 2 W 또는 Mock 어댑터의 <code>fetchStatus()</code>를 즉각 강제 폴링<br>
-                - <code>카메라 초기화</code>: 3D 궤도 카메라의 시점을 초기 각도(기본 스마트홈 조감 뷰)로 원상 복구<br>
-                - <code>단축키 안내</code>: 마우스 좌클릭(회전), 우클릭(이동), 휠(줌) 및 단축키 툴팁 표시
-              </td>
-            </tr>
-            <tr>
-              <td><strong>3D 가상 공간 씬</strong><br>(SceneCanvas / 3D)</td>
-              <td>⚠️ [상태 검토] 말풍선<br>🚪 스마트 도어 직접 클릭<br>💡 천장 조명 직접 클릭</td>
-              <td><span class="file-tag">src/components/3d/NeedsYouCallout3D.tsx</span><br><span class="file-tag">src/components/3d/SmartHomeRoom.tsx</span><br><span class="file-tag">src/components/ui/ReviewModal.tsx</span></td>
-              <td>
-                - 3D 허공에 떠 있는 [상태 검토] 말풍선 클릭 시, 이상치(온도 28℃ 초과 등)를 사전 점검하고 액추에이터를 승인하는 [상태 검토 모달] 실행<br>
-                - 3D 도어 메쉬 클릭: 서보모터(0° ↔ 90°) 토글 회전<br>
-                - 3D 조명 메쉬 클릭: RGB LED 온/오프 토글 및 3D 점등
-              </td>
-            </tr>
-            <tr>
-              <td><strong>우측 3단 멀티탭</strong><br>(InspectorPanel)</td>
-              <td>
-                1) 🎛️ 장치 인스펙터<br>
-                2) 📈 센서 출력<br>
-                3) 📜 제어 로그
-              </td>
-              <td>
-                <span class="file-tag">src/components/ui/InspectorPanel.tsx</span><br>
-                <span class="file-tag">src/components/ui/SensorOutputPanel.tsx</span><br>
-                <span class="file-tag">src/components/ui/ControlLogPanel.tsx</span>
-              </td>
-              <td>
-                - <strong>장치 인스펙터</strong>: 선택된 하드웨어 장치(도어, 조명, 센서)의 세부 속성 제어 슬라이더, 승인 대기 카드 및 [검토] / [승인 및 적용] 동작<br>
-                - <strong>센서 출력</strong>: 실시간 계측 게이지, ADC 16비트 원시 데이터 스트림, 실시간 CSV 파일 다운로드 기능<br>
-                - <strong>제어 로그</strong>: 하드웨어(Pico), 사용자(Web), 시뮬레이션(Mock), 시스템 전체 로그 실시간 필터 및 로그 비우기
-              </td>
-            </tr>
-            <tr>
-              <td><strong>하단 지능형 입력창</strong><br>(PromptBar)</td>
-              <td>
-                💬 자연어 한글 명령 입력창<br>
-                🏷️ 빠른 실행 칩 4종
-              </td>
-              <td><span class="file-tag">src/components/ui/PromptBar.tsx</span></td>
-              <td>
-                - 한글 자연어 명령을 입력하고 Enter를 누르면 구문 분석하여 IoT 스토어 및 모달을 직접 제어 (예: "문 열어", "불 켜", "스케줄", "장치 관리", "센서 출력", "로그 지워")<br>
-                - 추천 칩 클릭 시 즉시 해당 동작 실행 및 피드백 토스트 알림 표시
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 5-2. 핵심 4대 UI 기능 구현 원리 및 소스 코드 해설 -->
-      <div class="card">
-        <h3 style="color: #34d399; margin-top:0;">5-2. 핵심 4대 UI 기능의 구현 원리 및 코드 해설</h3>
-
-        <!-- 기능 1 -->
-        <h4 style="color:#60a5fa; font-size:14px; margin: 16px 0 6px 0;">(1) 우측 3단 멀티탭 시스템 (인스펙터 / 센서 출력 / 제어 로그)</h4>
-        <p>
-          단순한 단일 사이드바가 아니라, 관제 센터에 필수적인 <strong>세부 제어(인스펙터), 데이터 계측(센서 출력), 이벤트 추적(제어 로그)</strong> 3개 뷰를 조건부 렌더링으로 전환하도록 설계되었습니다:
-        </p>
-        <pre><code>// src/app/page.tsx 및 InspectorPanel.tsx
-type RightPanelTab = 'inspector' | 'telemetry' | 'logs';
-
-// 탭 전환 버튼 클릭에 따라 동적으로 자식 패널 렌더링
-{rightPanelTab === 'inspector' && &lt;InspectorContent /&gt;}
-{rightPanelTab === 'telemetry' && &lt;SensorOutputPanel /&gt;}
-{rightPanelTab === 'logs' && &lt;ControlLogPanel /&gt;}</code></pre>
-        <ul>
-          <li><strong>CSV 데이터 내보내기 구현 (SensorOutputPanel)</strong>: <code>new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })</code> 객체를 생성하고 가상 <code>&lt;a download&gt;</code> 링크를 클릭시켜 학생들이 엑셀에서 실험 결과를 바로 열어볼 수 있도록 구현했습니다.</li>
-          <li><strong>실시간 로그 스트림 (ControlLogPanel)</strong>: Zustand 스토어의 <code>logs[]</code> 배열을 구독(Subscribe)하여 발생 주체(PICO, USER, MOCK, SYSTEM)별 태그 색상과 함께 실시간 자동 스크롤로 렌더링합니다.</li>
-        </ul>
-
-        <!-- 기능 2 -->
-        <h4 style="color:#60a5fa; font-size:14px; margin: 16px 0 6px 0;">(2) 인터랙티브 모달 시스템 (장치 관리 / 자동화 스케줄 / 새 공간 / 상태 검토)</h4>
-        <p>
-          각 모달은 <code>activeModal: 'devices' | 'schedule' | 'add-room' | 'review' | null</code> 글로벌 상태로 제어되며, 반투명 검은색 백드롭(Backdrop Blur)과 키보드 <kbd>ESC</kbd> 닫기, 바깥 영역 클릭 닫기를 지원합니다:
-        </p>
-        <pre><code>// 모달 컴포넌트 공통 패턴 예시:
-if (!isOpen) return null;
-return (
-  &lt;div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-       onClick={onClose}&gt;
-    &lt;div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-6"
-         onClick={(e) =&gt; e.stopPropagation()}&gt;
-      {/* 모달 헤더, 바디, 액션 버튼 */}
-    &lt;/div&gt;
-  &lt;/div&gt;
-);</code></pre>
-
-        <!-- 기능 3 -->
-        <h4 style="color:#60a5fa; font-size:14px; margin: 16px 0 6px 0;">(3) 자연어 프롬프트 명령 파서 (PromptBar.tsx)</h4>
-        <p>
-          고등학생들이 음성 비서(Siri, Bixby)처럼 명령어를 타이핑하면 키워드를 분석하여 실제 IoT 스토어의 액션을 호출합니다:
-        </p>
-        <pre><code>const handleExecute = () => {
-  const q = input.trim().toLowerCase();
-  if (q.includes('열') || q.includes('open')) {
-    setServoAngle(90); addLog('USER', '프롬프트 명령: 도어 90° 개방');
-  } else if (q.includes('닫') || q.includes('close')) {
-    setServoAngle(0); addLog('USER', '프롬프트 명령: 도어 0° 폐쇄');
-  } else if (q.includes('불') || q.includes('조명') || q.includes('led')) {
-    toggleLight();
-  } else if (q.includes('스케줄')) {
-    openModal('schedule');
-  } else if (q.includes('센서') || q.includes('출력')) {
-    setActiveTab('telemetry');
-  }
-};</code></pre>
-
-        <!-- 기능 4 -->
-        <h4 style="color:#60a5fa; font-size:14px; margin: 16px 0 6px 0;">(4) 3D 디지털 트윈 직접 인터랙션 (NeedsYouCallout3D & SmartHomeRoom)</h4>
-        <p>
-          R3F Drei의 <code>&lt;Html center transform&gt;</code>을 사용하여 3D 룸 상단에 이상치 감지 말풍선을 띄우고, 마우스 클릭 이벤트를 <code>onReviewModal()</code>과 연결하여 가상 공간과 UI 간의 실시간 동기화를 달성했습니다.
-        </p>
-      </div>
-
-      <!-- 5-3. 팀별 프로젝트 주제 맞춤 커스터마이징 3대 가이드 -->
-      <div class="card">
-        <h3 style="color: #f59e0b; margin-top:0;">5-3. 팀별 프로젝트 주제 맞춤 UI 커스터마이징 3대 실전 가이드</h3>
-        <p>학생들이 프로젝트 주제를 스마트홈에서 다른 도메인으로 바꿀 때, UI 버튼과 모달을 어떻게 개조해야 하는지 구체적인 가이드를 제공합니다:</p>
-
-        <!-- 가이드 1: 스마트팜 -->
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
-          <h4 style="color: #34d399; margin: 0 0 8px 0;">🌱 가이드 1: [스마트팜(Smart Farm)] 팀의 UI 변경 포인트</h4>
-          <ul style="margin-bottom:0;">
-            <li><strong>사이드바 공간 이름</strong>: <code>src/components/ui/RoomsSidebar.tsx</code>의 기본 방 목록을 <code>['온실 1동 (파프리카)', '온실 2동 (스마트 베드)', '양액 배양실']</code>로 변경합니다.</li>
-            <li><strong>장치 관리 모달(DeviceManageModal)</strong>: 온습도/조도/서보/LED 대신 <strong>[GP27 토양수분센서, GP16 환기 돔 서보모터, GP18~20 식물 생장 LED, GP14 워터펌프 릴레이]</strong>를 핀아웃 목록에 등록하고 테스트 버튼을 연동합니다.</li>
-            <li><strong>자동화 스케줄(ScheduleModal)</strong>: 규칙 5종을 농업 규칙(예: ① 토양 수분 30% 미만 시 30초 관수 펌프 가동, ② 온실 내부 32℃ 초과 시 환기 돔 90° 개방, ③ 08:00~18:00 식물 생장 LED 점등)으로 수정합니다.</li>
-            <li><strong>센서 출력 & CSV(SensorOutputPanel)</strong>: 토양 수분(%) 게이지 바를 추가하고, CSV 헤더에 <code>soil_moisture</code> 항목을 넣어 일일 생육 일지 데이터로 활용합니다.</li>
-            <li><strong>프롬프트 바(PromptBar)</strong>: "온실 돔 열어", "생장등 켜", "토양 수분 측정해", "양액 펌프 가동"을 명령어에 등록합니다.</li>
-          </ul>
-        </div>
-
-        <!-- 가이드 2: 스마트팩토리 -->
-        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
-          <h4 style="color: #60a5fa; margin: 0 0 8px 0;">🏭 가이드 2: [스마트팩토리(Smart Factory)] 팀의 UI 변경 포인트</h4>
-          <ul style="margin-bottom:0;">
-            <li><strong>사이드바 공간 이름</strong>: <code>['생산 1라인 (컨베이어)', '품질 검사존', '자동 적재 창고']</code>로 변경합니다.</li>
-            <li><strong>장치 관리 모달</strong>: <strong>[GP26 물품 통과 광센서, GP16 불량품 분류 푸셔 암, GP18~20 생산 상태 3단 타워 램프(녹/황/적)]</strong>을 등록합니다.</li>
-            <li><strong>자동화 스케줄</strong>: ① 불량품 감지 시 서보 푸셔 0.5초 가동, ② 컨베이어 과열 시 라인 비상 정지 및 적색 경고등 점멸, ③ 교대 시간(12:00) 대기 모드 전환 규칙을 설정합니다.</li>
-            <li><strong>제어 로그 패널(ControlLogPanel)</strong>: 생산량 카운트, 불량품 감지 이벤트, 긴급 정지 이력을 실시간 스트림으로 필터링하도록 라벨을 변경합니다.</li>
-            <li><strong>프롬프트 바</strong>: "컨베이어 시작", "푸셔 테스트", "공장 비상 정지", "타워램프 녹색"을 지원합니다.</li>
-          </ul>
-        </div>
-
-        <!-- 가이드 3: 스마트 보안/물류 -->
-        <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 0;">
-          <h4 style="color: #a78bfa; margin: 0 0 8px 0;">🛡️ 가이드 3: [스마트 보안 & 빌딩 관제(Smart Security)] 팀의 UI 변경 포인트</h4>
-          <ul style="margin-bottom:0;">
-            <li><strong>사이드바 공간 이름</strong>: <code>['중앙 게이트 (차량 출입)', '방재 센터', '1층 로비 출입구']</code>로 변경합니다.</li>
-            <li><strong>장치 관리 모달</strong>: <strong>[GP16 차량 차단기 서보모터, GP26 차량 진입 초음파/광센서, GP18~20 보안 신호등]</strong>을 등록합니다.</li>
-            <li><strong>자동화 스케줄</strong>: ① 차량 감지 시 차단기 90° 상승 후 5초 뒤 자동 하강, ② 야간 침입 감지 시 경보 사이렌 및 적색 LED 가동, ③ 22:00 이후 심야 방범 모드 전환.</li>
-            <li><strong>프롬프트 바</strong>: "차단기 올려", "차단기 내려", "보안 모드 가동", "출입 로그 보여줘"를 연결합니다.</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 5-4. UI 커스터마이징 전용 완성형 바이브 코딩 프롬프트 4선 -->
-      <div class="card">
-        <h3 style="color: #ec4899; margin-top:0;">5-4. AI 바이브 코딩용 UI 커스터마이징 실전 프롬프트 4선 (원클릭 복사)</h3>
-        <p>학생들이 대시보드 UI를 자신들의 프로젝트에 맞게 바꿀 때 사용할 수 있는 완성된 프롬프트입니다. 아래 버튼을 눌러 AI에게 질문하세요:</p>
-
-        <!-- UI 프롬프트 1 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>UI 프롬프트 1. [장치 관리 모달] 우리 팀 하드웨어 핀맵으로 바꾸기</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-ui-devices', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-          <pre id="prompt-ui-devices">당신은 Next.js 14 + React + Zustand 기반 3D IoT 대시보드 개발자입니다.
-우리 팀 프로젝트 주제는 [여기에 주제 입력: 예: 스마트팜 / 스마트팩토리 / 스마트보안]입니다.
-
-현재 `src/components/ui/DeviceManageModal.tsx`에 기본 스마트홈 하드웨어(DHT11 GP15, SG90 GP16, RGB LED GP18~20, Cds GP26)가 표시되고 있습니다.
-이 장치 목록을 우리 팀의 하드웨어 구성으로 수정하고 싶습니다:
-
-[우리 팀 하드웨어 핀맵]:
-- 장치 1: [부품명, 핀 번호, 역할 예: 토양수분센서, GP27, 아날로그 수분 측정]
-- 장치 2: [부품명, 핀 번호, 역할 예: 환기 돔 서보모터, GP16, PWM 개폐]
-- 장치 3: [부품명, 핀 번호, 역할 예: 식물생장 조명, GP18~20, PWM 점등]
-- 장치 4: [부품명, 핀 번호, 역할 예: 관수 펌프 릴레이, GP14, 디지털 On/Off]
-
-`DeviceManageModal.tsx`의 장치 리스트(`DEVICES` 배열)와 각 장치의 '테스트 동작' 버튼 클릭 핸들러 코드를 우리 하드웨어에 맞게 수정하여 완성된 전체 코드를 제공해주세요.</pre>
-        </div>
-
-        <!-- UI 프롬프트 2 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>UI 프롬프트 2. [자동화 스케줄] 우리 팀 도메인 규칙으로 변경하기</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-ui-schedule', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-          <pre id="prompt-ui-schedule">우리는 Next.js + Zustand 3D IoT 대시보드를 [여기에 팀 주제 입력: 예: 스마트팜]으로 개발 중인 학생 팀입니다.
-`src/components/ui/ScheduleModal.tsx`에 등록된 5개의 기본 자동화 규칙을 우리 팀에 필요한 규칙들로 교체하고 싶습니다:
-
-[우리 팀 자동화 규칙 목록]:
-1. 규칙 1: [조건 및 액션 예: 토양 수분 30% 이하 감지 시 관수 펌프 30초 가동]
-2. 규칙 2: [조건 및 액션 예: 온실 내부 온도 32℃ 초과 시 환기 돔 서보 90° 자동 개방]
-3. 규칙 3: [조건 및 액션 예: 08:00 정각 식물생장 LED 켜기]
-4. 규칙 4: [조건 및 액션 예: 18:00 정각 식물생장 LED 끄기 및 야간 모드 전환]
-5. 규칙 5: [조건 및 액션 예: 조도 300 이하로 어두워질 때 보조 생장등 가동]
-
-`ScheduleModal.tsx`의 `RULES` 배열 데이터와 아이콘, 토글 스위치 상태를 우리 팀 규칙에 맞게 반영한 전체 코드를 작성해주세요.</pre>
-        </div>
-
-        <!-- UI 프롬프트 3 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>UI 프롬프트 3. [센서 출력 & CSV] 신규 센서 데이터 로깅 및 CSV 내보내기</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-ui-telemetry', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-          <pre id="prompt-ui-telemetry">우리 팀은 3D IoT 대시보드 플랫폼에 [여기에 신규 센서 입력: 예: 토양 수분 센서(soil_moisture)]를 추가했습니다.
-우측 탭 패널인 `src/components/ui/SensorOutputPanel.tsx`에서:
-1. 실시간 계측 게이지 바에 새 센서 수치(값, 단위, 정상/주의/위험 상태 색상)를 표시하고,
-2. 하단 '실시간 원시 데이터(Raw ADC / Bus)' 목록에 새 센서의 16비트 ADC 수치를 추가하며,
-3. [CSV 파일 내보내기] 버튼을 눌렀을 때 다운로드되는 CSV 파일의 컬럼(헤더)에 새 센서 데이터가 포함되도록
-
-`SensorOutputPanel.tsx`의 전체 수정 코드를 제공해주세요.</pre>
-        </div>
-
-        <!-- UI 프롬프트 4 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>UI 프롬프트 4. [자연어 프롬프트] 우리 팀 전용 한국어 명령어 추가하기</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-ui-nlp', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-          <pre id="prompt-ui-nlp">대시보드 하단의 `src/components/ui/PromptBar.tsx`에 우리 팀 프로젝트([여기에 주제 입력])를 위한 자연어 명령어들을 추가하고 싶습니다.
-
-[추가하고 싶은 명령어와 실행 동작]:
-1. "환기 돔 열어" 또는 "환기창 열어" -> 서보모터 90도로 회전
-2. "환기 돔 닫아" 또는 "환기창 닫아" -> 서보모터 0도로 회전
-3. "생장 조명 켜" 또는 "식물등 켜" -> RGB LED 켜기 (색상: 연보라 #c084fc)
-4. "생장 조명 꺼" -> RGB LED 끄기
-5. "수분 측정해" -> 우측 탭을 'telemetry'로 전환하고 알림 표시
-6. 빠른 추천 칩 4개도 우리 팀 명령어 버튼으로 변경
-
-`PromptBar.tsx`에서 이 구문 분석 로직과 추천 칩 목록을 반영한 완성된 코드를 작성해주세요.</pre>
-        </div>
-      </div>
-
-      <!-- 5-5. 3D 공간 플로팅 UI 및 모달 레이어링 가이드 (신규) -->
-      <div class="card" style="border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.08);">
-        <h3 style="color: #a78bfa; margin-top:0;">🌟 5-5. 3D 공간 플로팅 UI 및 모달 레이어링 (Z-Index 제어 & Auto-Dismiss)</h3>
-        <p>
-          React Three Fiber (R3F)의 <code>&lt;Html&gt;</code>(Drei) 컴포넌트는 3D 가상 공간 내부에 HTML DOM(말풍선, 센서 배지, 경고 카드)을 띄울 때 매우 유용하지만, 
-          기본 <code>z-index</code>가 약 <strong>16,777,271</strong>로 극도로 높게 책정되어 있어 
-          일반 CSS 모달 다이얼로그(설정창, 장비관리창 등)를 뚫고 나와 가려버리는 치명적인 UI 결함이 발생합니다.
-        </p>
-
-        <div style="background: #0f172a; padding: 16px 20px; border-radius: 12px; border: 1px solid #334155; margin: 14px 0;">
-          <h4 style="color: #38bdf8; margin: 0 0 10px 0;">💡 반드시 준수해야 하는 3대 3D UI 레이어링 공식:</h4>
-          <ol style="margin-bottom: 0;">
-            <li style="margin-bottom: 8px;">
-              <strong>Drei &lt;Html&gt; z-index 범위 제한</strong>:
-              3D 어노테이션 컴포넌트(<code>NeedsYouCallout3D.tsx</code> 등)의 <code>&lt;Html&gt;</code> 태그에 <code>zIndexRange={[10, 0]}</code> 속성을 반드시 지정합니다. 이를 통해 3D 오버레이 DOM의 z-index가 최대 10을 넘지 않도록 안전하게 가둡니다.
-            </li>
-            <li style="margin-bottom: 8px;">
-              <strong>모달 컨테이너 z-index 격상</strong>:
-              화면 전면을 덮는 모든 모달 창(<code>PicoIpModal</code>, <code>DeviceManageModal</code>, <code>ScheduleModal</code>, <code>AddRoomModal</code>, <code>ReviewModal</code>)의 백드롭 컨테이너를 <code>z-[100]</code> 이상으로 지정합니다.
-            </li>
-            <li style="margin-bottom: 8px;">
-              <strong>모달 활성화 시 3D 메시지 자동 숨김(Unmount)</strong>:
-              페이지 상위(<code>page.tsx</code>)에서 모달 열림 여부(<code>isModalOpen</code>)를 파악하여 <code>SceneCanvas</code> -&gt; <code>SmartHomeRoom</code> -&gt; <code>NeedsYouCallout3D</code>로 전달하고, 모달이 열려 있을 때는 <code>if (isModalOpen) return null;</code>로 3D 말풍선을 즉시 언마운트합니다.
-            </li>
-            <li style="margin-bottom: 0;">
-              <strong>일회성 알림 자동 소멸(Auto-Dismiss) & 수동 닫기 버튼</strong>:
-              '승인 완료', '동작 확인' 등의 일회성 알림은 화면 중앙에 영구히 남아있지 않도록 <code>setTimeout(..., 4500)</code>을 통해 4.5초 후 자동 소멸시키고, 우측 상단에 <code>✕</code> 닫기 버튼을 항상 제공해야 합니다.
-            </li>
-          </ol>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. [학생 실습] 팀별 Context 문장 작성법 & 주제별 Context 예시문 (신규) -->
-    <section id="sec-context-guide">
-      <h2>⭐ 6. [학생 실습] 팀별 Context 문장 작성 가이드 & 주제별 Context 예시문</h2>
-      <p>
-        모의 수업이나 실제 팀 프로젝트를 진행할 때, <strong>"우리 팀만의 독창적인 아이디어"</strong>를 어떻게 AI에게 설명해야 할까요?<br>
-        기존 12선에 없는 완전히 새로운 주제라도, 아래 <strong>[4단계 Context 구조 설계 공식]</strong>과 <strong>[빈칸 완성형 템플릿]</strong>을 활용하면 
-        누구나 3분 만에 생성형 AI(ChatGPT, Claude, Gemini)로부터 100% 작동하는 최적화 코드를 이끌어낼 수 있습니다!
-      </p>
-
-      <!-- 6-1. 4단계 Context 구조 설계 공식 -->
-      <div class="card" style="border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.08);">
-        <h3 style="color: #60a5fa; margin-top:0;">📐 6-1. 생성형 AI를 움직이는 '4단계 Context 구조 설계 공식'</h3>
-        <p style="font-size:13.5px; color:#cbd5e1;">생성형 AI에게 질문할 때는 아래 4개 블록을 순서대로 하나의 메시지에 묶어서 전송해야 환각 없이 우리 플랫폼에 맞는 코드가 나옵니다:</p>
-
-        <div style="display:flex; flex-direction:column; gap:12px; margin-top:14px;">
-          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
-            <div style="font-weight:700; color:#38bdf8; font-size:13.5px; margin-bottom:4px;">
-              [블록 1: AI 역할 & 기반 플랫폼 선언]
-            </div>
-            <div style="color:#cbd5e1; font-size:13px;">
-              "당신은 Next.js 14 + Three.js(React Three Fiber) + Zustand + Raspberry Pi Pico 2 W(CircuitPython 9.x)로 구동되는 스마트홈 3D IoT 공통 플랫폼의 전문 개발자입니다. 우리는 <code>PLATFORM_FULL_CONTEXT.md</code> 아키텍처를 기반으로 팀 프로젝트를 개발하고 있습니다."
-            </div>
-          </div>
-
-          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
-            <div style="font-weight:700; color:#34d399; font-size:13.5px; margin-bottom:4px;">
-              [블록 2: 우리 팀 프로젝트 주제 & 하드웨어 핀맵 명세]
-            </div>
-            <div style="color:#cbd5e1; font-size:13px;">
-              "우리 팀의 주제는 <strong>[스마트 OO 시스템]</strong>입니다.<br>
-              Pico 2 W 하드웨어 구성:<br>
-              - 신규 센서: [센서 부품명], [핀 번호(예: GP27 ADC1)], [측정 물리량 및 단위(예: 수위 0~100%)]<br>
-              - 기존 센서 유지: [Cds 조도(GP26), DHT11 온습도(GP15) 등 활용 여부]<br>
-              - 액추에이터: SG90 서보모터(GP16)는 [역할: 예: 사료 밸브 개폐], RGB LED(GP18~20)는 [역할: 예: 동작 상태등]"
-            </div>
-          </div>
-
-          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
-            <div style="font-weight:700; color:#fbbf24; font-size:13.5px; margin-bottom:4px;">
-              [블록 3: 3D 가상 공간 및 대시보드 UI 연동 요구사항]
-            </div>
-            <div style="color:#cbd5e1; font-size:13px;">
-              "- 3D 가상 공간: 기존 스마트홈 방 메쉬 대신 [바닥/벽면 콘셉트, 새 가구/장비 3D 오브젝트]를 배치하고, 서보 각도에 따라 [회전/개폐 R3F 애니메이션]을 연동해주세요.<br>
-              - 대시보드 UI: 우측 <code>SensorOutputPanel.tsx</code>에 [신규 센서 실시간 게이지]를 추가하고, CSV 내보내기 컬럼에 포함해주세요."
-            </div>
-          </div>
-
-          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
-            <div style="font-weight:700; color:#f43f5e; font-size:13.5px; margin-bottom:4px;">
-              [블록 4: 수정 대상 파일 경계(Change Boundary) 지정]
-            </div>
-            <div style="color:#cbd5e1; font-size:13px;">
-              "반드시 기존 Zustand 단일 스토어(<code>useIoTStore.ts</code>) 및 2-Phase Acknowledgment 규칙을 준수하며, 다음 핵심 4개 파일의 전체 완성 코드를 제공해주세요:<br>
-              1. <code>firmware/circuitpython/code.py</code> (하드웨어 펌웨어)<br>
-              2. <code>src/core/types/iot.ts</code> (타입 정의)<br>
-              3. <code>src/core/adapter/MockIoTAdapter.ts</code> (시뮬레이터 난수 로직)<br>
-              4. <code>src/components/3d/우리팀Room.tsx</code> 및 <code>SensorOutputPanel.tsx</code> (3D & UI)"
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6-2. [빈칸 채우기] 학생용 맞춤 Context 완성 템플릿 -->
-      <div class="card" style="border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.08);">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-          <h3 style="color: #34d399; margin:0;">📝 6-2. [빈칸 채우기] 우리 팀 맞춤형 Context 완성 템플릿</h3>
-          <button class="copy-btn" onclick="copyFullPrompt('prompt-custom-template', this)" style="background:#059669;">
-            📋 빈칸 템플릿 원클릭 복사
-          </button>
-        </div>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">
-          아래 박스 내용을 복사한 뒤 메모장이나 AI 채팅창에서 대괄호 <code>[   ]</code>로 묶인 부분만 우리 팀의 아이디어로 채워 넣어서 AI에게 전송하세요!
-        </p>
-        <pre id="prompt-custom-template">당신은 Next.js 14 + R3F(Three.js) + Zustand + CircuitPython(Raspberry Pi Pico 2 W) 기반 스마트홈 3D IoT 플랫폼 전문 개발자입니다.
-우리는 `PLATFORM_FULL_CONTEXT.md` 아키텍처를 기반으로 팀 프로젝트를 진행 중인 고등학생 팀입니다.
-
-우리 팀 프로젝트 주제: [프로젝트 주제명 입력: 예: 스마트 펫케어 급식기 / 스마트 빗물 재활용 시스템 / 스마트 무인 도서관]
-
-### [1. 우리 팀 하드웨어 핀맵 명세]
-1. 신규 센서:
-   - 센서명: [센서 이름 예: 초음파 거리 센서 / 토양 수분 센서 / 불꽃 감지 센서]
-   - 핀 번호: [Pico 2 W 핀: 예: GP27 (ADC1)]
-   - 측정 범위 및 단위: [예: 0~100cm / 0~100% / 정상·경보 0, 1]
-2. 액추에이터 동작:
-   - SG90 서보모터 (GP16): [서보모터가 움직일 역할 예: 사료 투출 밸브 0도->60도 / 환기 돔 개폐 0도->90도 / 차단봉 0도->90도]
-   - RGB LED (GP18, GP19, GP20): [LED가 나타낼 상태 예: 녹색(정상), 노란색(동작 중), 빨간색(주의/경보)]
-   - 기존 센서 활용: [Cds 조도 센서 GP26 / DHT11 온습도 GP15 중 유지할 항목]
-
-### [2. 3D 가상 공간 및 대시보드 UI 연동 요구사항]
-1. 3D 가상 공간 (R3F):
-   - 공간 콘셉트: [예: 펫룸 / 농업 온실 / 도서관 열람실 / 공장 생산라인]
-   - 배치할 3D 메쉬 오브젝트: [예: 사료통, 급수 그릇 / 스마트 베드 / 책상과 의자 / 컨베이어 벨트]
-   - 서보모터 연동 R3F 애니메이션: [서보 각도 변화에 따라 3D 오브젝트가 회전하거나 열리는 동작]
-2. 대시보드 UI 패널:
-   - `SensorOutputPanel.tsx`에 신규 센서 게이지(값, 단위, 정상/주의 범위)를 추가해주세요.
-   - CSV 파일 내보내기 시 신규 센서 계측 데이터 열을 포함해주세요.
-
-### [3. 요청 파일 및 개발 규칙]
-Zustand 단일 스토어(`useIoTStore.ts`)의 2-Phase Acknowledgment 규칙과 타입을 준수하며, 다음 4개 파일의 완성된 전체 코드를 작성해주세요:
-1. `firmware/circuitpython/code.py`: 신규 센서 계측 및 `/api/status` JSON 반환, 서보/LED 제어
-2. `src/core/types/iot.ts`: 신규 센서 데이터 인터페이스 및 updateSensor 유니온 타입 추가
-3. `src/core/adapter/MockIoTAdapter.ts`: 하드웨어 부재 시에도 동작할 자연스러운 난수 시뮬레이터 로직
-4. `src/components/3d/TeamCustomRoom.tsx`: 우리 팀 전용 3D 씬 컴포넌트 전체 코드</pre>
-      </div>
-
-      <!-- 6-3. 창의적 팀별 프로젝트 주제별 Context 예시 문장 6선 -->
-      <div class="card" style="border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.08);">
-        <h3 style="color: #fbbf24; margin-top:0;">💡 6-3. 다양한 창의적 주제별 Context 예시 문장 6선 (원클릭 복사)</h3>
-        <p style="font-size:13px; color:#cbd5e1; margin-bottom:14px;">
-          실제 고등학교 팀 프로젝트에서 가장 많이 선택하는 6가지 창의적 주제의 완성형 Context 문장입니다. 복사하여 바로 AI에게 제시해보세요!
-        </p>
-
-        <!-- 예시 1: 스마트 실버케어 & 응급 안전 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 1. [스마트 실버케어 & 독거노인 안심] 낙상 감지 센서 및 비상 호출문</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-silver', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-silver">우리 팀은 고령화 사회를 위한 [스마트 실버케어 & 독거노인 안심 안부 확인 시스템]을 제작합니다.
-- 하드웨어: Pico 2 W의 GP27(ADC1)에 충격/가속도 센서를 연결하여 침대에서의 낙상(Fall Detection) 충격을 감지하고, GP14에는 비상 호출 버튼을 연결합니다. SG90 서보모터(GP16)는 긴급 상황 시 구조 대원이 진입할 수 있도록 '안심 자동 도어록'을 90도 개방하며, RGB LED(GP18~20)는 적색 고주파 사이렌으로 점멸합니다.
-- 3D 가상 공간: 어르신 생활 침실(침대, 비상벨, 보행 보조기구) 메쉬를 배치하고, 낙상 감지 이벤트 발생 시 침대 주변에 적색 위험 오라 효과를 3D로 렌더링해주세요.
-- 대시보드 UI: `SensorOutputPanel.tsx`에 '낙상 위험도(G-Force)' 게이지와 '비상 호출 상태' 배지를 추가하고, 보호자 알림 로그를 스트림에 출력해주세요.</pre>
-        </div>
-
-        <!-- 예시 2: 스마트 도서관 & 스터디 카페 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 2. [스마트 도서관 & 스터디 카페] 좌석 재실 감지 및 자동 맞춤 조도</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-library', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-library">우리 팀은 에너지 절감형 [스마트 무인 도서관 & 맞춤형 스터디 카페 열람실]을 구현합니다.
-- 하드웨어: Cds 조도 센서(GP26)로 열람실 자연 채광을 측정하고, 초음파 센서(GP27)로 의자 좌석의 이용자 착석(재실 여부)을 0~80cm 거리로 판별합니다. SG90 서보모터(GP16)는 이용자 맞춤형 독서대 각도(0~60도) 자동 조절 장치로 동작하며, RGB LED(GP18~20)는 집중력을 높이는 웜화이트(4000K) 개인 스탠드 조명으로 조도를 자동 보정합니다.
-- 3D 가상 공간: 원목 스터디 책상, 의자, 책꽂이 메쉬를 배치하고, 사람이 착석하면 책상 스탠드 조명이 켜지며 3D 독서대가 틸팅되는 인터랙션을 구현해주세요.
-- 대시보드 UI: 좌석 이용 현황(사용 중/빈 좌석) 및 일일 독서 시간 누적 시계열 데이터를 패널에 표시해주세요.</pre>
-        </div>
-
-        <!-- 예시 3: 스마트 양계장 & 축사 모니터링 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 3. [스마트 축산 & 양계장] 암모니아 유해가스 감지 및 자동 환기/사료 공급</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-farm', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-farm">우리 팀은 스마트 축산 프로젝트로 [스마트 양계장 유해가스 모니터링 및 자동 환기 시스템]을 제작합니다.
-- 하드웨어: MQ-137 암모니아/유해가스 센서를 Pico 2 W의 GP27(ADC1)에 연결하여 0~100ppm 농도를 계측하고, DHT11(GP15)로 축사 온습도를 실시간 감시합니다. 가스 농도 25ppm 초과 또는 내부 온도 30도 초과 시 SG90 서보모터(GP16)가 환기 셔터를 90도 개방하며, RGB LED는 황색 환기 팬 가동 표시등으로 동작합니다.
-- 3D 가상 공간: 축사 지붕 트러스, 환기 셔터 갤러리 창문, 사료 공급 라인을 3D로 모델링하고 셔터 개폐를 서보 각도와 연동해주세요.
-- 대시보드 UI: 암모니아 ppm 농도 위험 경보 위젯 및 환기 이력 CSV 내보내기를 연동해주세요.</pre>
-        </div>
-
-        <!-- 예시 4: 스마트 아쿠아포닉스 & 수족관 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 4. [스마트 아쿠아포닉스 & 수족관] 수온/수위 감지 및 자동 먹이 디스펜서</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-aqua', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-aqua">우리 팀은 물고기와 식물을 함께 키우는 [친환경 스마트 아쿠아포닉스 & 수족관 생태계]를 구축합니다.
-- 하드웨어: 방수 온도 센서(DS18B20) 또는 아날로그 수위 센서를 GP27(ADC1)에 연결하여 어항 수위(0~100%) 및 수온을 계측합니다. SG90 서보모터(GP16)는 정해진 시간에 1회 회전(0도->90도->0도)하여 어류 사료를 투입하는 '회전형 피더(Feeder)' 역할을 수행하며, RGB LED(GP18~20)는 수초 생장을 돕는 수중 풀스펙트럼 LED 조명으로 동작합니다.
-- 3D 가상 공간: 투명한 유리 수조 탱크, 수초 배드, 상단 수경재배 채소 베드를 3D로 렌더링하고 먹이 투하 시 수면에 파문이 일어나는 시각 효과를 연동해주세요.
-- 대시보드 UI: 수위 게이지, 일일 급식 타이머 위젯, 조명 수경재배 타이머 스케줄을 추가해주세요.</pre>
-        </div>
-
-        <!-- 예시 5: 스마트 의류 케어 & 스타일러 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 5. [스마트 의류 케어 & 스타일러] 내부 습도 건조 및 살균 UV 케어</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-styler', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-styler">우리 팀은 스마트 가전 프로젝트로 [미니 스마트 의류관리기 & 스타일러(Styler)]를 개발합니다.
-- 하드웨어: DHT11(GP15) 온습도 센서로 스타일러 챔버 내부 습도(건조 진행도)를 계측하고, 도어 자석 리드 스위치를 GP14에 연결하여 문 열림을 감지합니다. SG90 서보모터(GP16)는 코스 완료 후 자연 건조를 위해 문을 15도 살짝 열어주는 '자동 문열림 래치'로 동작하며, RGB LED(GP18~20)는 살균 모드 시 보라색(UV 살균 광)으로 발광합니다.
-- 3D 가상 공간: 미려한 스타일러 캐비닛, 투명 강화유리 도어, 내부 옷걸이 행거를 3D로 구성하고 코스 진행에 따른 스팀 및 도어 래치 개방 모션을 연동해주세요.
-- 대시보드 UI: 스타일러 동작 코스(표준, 살균, 급속 건조) 선택 버튼과 잔여 시간 게이지를 구현해주세요.</pre>
-        </div>
-
-        <!-- 예시 6: 스마트 압축 분리수거함 -->
-        <div class="prompt-box">
-          <div class="prompt-title">
-            <span>예시 문장 6. [스마트 친환경 시티] 적재량 감지 자동 압축 쓰레기 분리수거함</span>
-            <button class="copy-btn" onclick="copyFullPrompt('context-ex-trash', this)">
-              📋 Context 복사
-            </button>
-          </div>
-          <pre id="context-ex-trash">우리 팀은 환경 보호를 위한 [스마트 자동 압축 쓰레기통 & 분리수거 관제 시스템]을 제작합니다.
-- 하드웨어: 초음파 거리 센서를 Pico 2 W의 GP26에 연결하여 수거함 내부 쓰레기 적재 높이(0~50cm)를 실시간 계측합니다. 적재량이 80%에 도달하면 SG90 서보모터(GP16)가 '압축 플레이트'를 90도 눌러 부피를 1/3로 축소시키며, RGB LED(GP18~20)는 적재 여유(녹색), 압축 중(주황색), 완전 만적 수거 필요(적색 점멸)를 표시합니다.
-- 3D 가상 공간: 공원 스마트 쓰레기통 부스, 회전식 투입구, 내부 압축 피스톤 메쉬를 3D 공간에 배치하고 압축 동작 시 기계 하강 애니메이션을 연동해주세요.
-- 대시보드 UI: 수거함 적재율(%), 일일 압축 횟수 카운터, 환경미화원 긴급 수거 요청 알림을 연동해주세요.</pre>
-        </div>
-      </div>
-    </section>
-
-    <!-- 7. 실전 완성형 프롬프트 12선 (원클릭 풀 복사) -->
-    <section id="sec-prompts">
-      <h2>7. 실전 완성형 프롬프트 12선 (원클릭 풀 Context 복사)</h2>
-      <p>
-        아래 프롬프트 카드의 <strong>[원클릭 풀 복사]</strong> 버튼을 누르면, <strong>현재 플랫폼의 원본 코드 스니펫까지 통째로 포함된 완성형 프롬프트</strong>가 복사됩니다.<br>
-        복사된 내용을 ChatGPT, Claude, Gemini 창에 붙여넣기만 하면 AI가 100% 여러분의 코드를 이해하고 정확한 수정본을 제공합니다!
-      </p>
-
-      <!-- 프롬프트 1 (스마트팜 완성형 프롬프트) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 1. [스마트팜] 테마 변경 올인원 프롬프트</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 원본 코드 스니펫 4종 포함</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-smart-farm', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <p style="font-size:12px; color:#94a3b8; margin-bottom:8px;">
-          토양수분센서(GP27) 추가 + 환기 돔 서보모터 + 3D 온실 돔 컴포넌트 생성을 위한 완벽한 프롬프트입니다.
-        </p>
-        <pre id="prompt-smart-farm">당신은 Next.js 14 + React 18 + React Three Fiber (R3F) + Zustand + CircuitPython으로 구동되는 '스마트홈 3D IoT 공통 플랫폼'의 전문 개발자입니다.
-우리는 이 플랫폼을 [스마트팜(Smart Farm)] 주제로 개조하려고 합니다.
-
-### [1. 변경 목표]
-1. 하드웨어/센서:
-   - DHT11 온습도 센서 대신 [토양 수분 센서(Soil Moisture)]를 Pico 2 W의 GP27(ADC1) 핀에 추가합니다.
-   - Cds 조도 센서(GP26)와 RGB LED(GP18,19,20 - 식물 성장 조명)는 그대로 유지합니다.
-   - SG90 서보모터(GP16)는 방문 대신 '온실 상단 환기 돔 개폐기'로 용도를 변경합니다.
-2. 3D 가상 공간:
-   - 스마트홈 방 대신 흙 바닥과 투명 유리 프레임이 있는 '온실 돔'을 만들고 중앙에 식물 화분 배드를 배치합니다.
-   - 서보모터 각도(0~180도)에 따라 온실 환기 돔 지붕이 부드럽게 열리고 닫히는 애니메이션을 연동합니다.
-
----
-
-### [2. 현재 플랫폼의 원본 코드 참고 자료]
-
-#### (A) 현재 Pico 2 W 펌웨어 (firmware/circuitpython/code.py):
-```python
-import board, analogio, pwmio, wifi, socketpool
-from adafruit_motor import servo
-from adafruit_httpserver import Server, Request, JSONResponse, GET, POST, OPTIONS
-
-cds = analogio.AnalogIn(board.GP26)
-servo_pwm = pwmio.PWMOut(board.GP16, duty_cycle=2 ** 15, frequency=50)
-my_servo = servo.Servo(servo_pwm)
-
-@server.route("/api/status", [GET, OPTIONS])
-def handle_status(request: Request):
-    return JSONResponse(request, {
-        "status": "online",
-        "temperature": 24.0,
-        "humidity": 50.0,
-        "light_adc": cds.value,
-        "servo_angle": current_servo_angle,
-        "rgb_color": current_rgb_color,
-        "rgb_state": current_rgb_state
-    })
-```
-
-#### (B) 현재 센서/액추에이터 타입 (src/core/types/iot.ts):
-```typescript
-export interface SensorData {
-  deviceId: string;
-  name: string;
-  value: number;
-  unit: string;
-  updatedAt: number;
-  isStale: boolean;
-}
-
-export interface IoTPlatformState {
-  sensors: {
-    dht11_temp: SensorData;
-    dht11_humi: SensorData;
-    cds_light: SensorData;
-  };
-  actuators: {
-    sg90_door: ServoActuatorData;
-    rgb_light: RgbActuatorData;
-  };
-  updateSensor: (id: 'dht11_temp' | 'dht11_humi' | 'cds_light', value: number) => void;
-  confirmServoAck: (angle: number) => void;
-}
-```
-
-#### (C) 현재 시뮬레이터 (src/core/adapter/MockIoTAdapter.ts):
-```typescript
-// 2초마다 센서 난수 갱신
-useIoTStore.getState().updateSensor('dht11_temp', newTemp);
-useIoTStore.getState().updateSensor('dht11_humi', newHumi);
-useIoTStore.getState().updateSensor('cds_light', newLight);
-```
-
----
-
-### [3. 요청 사항]
-위 원본 코드를 기반으로, 학생들이 파일에 바로 덮어쓸 수 있도록 다음 4개 파일의 수정 코드를 명확한 파일 경로와 함께 단계별로 작성해주세요:
-1. `firmware/circuitpython/code.py`: 토양수분(GP27) 측정 및 환기 돔 서보모터 제어 반영
-2. `src/core/types/iot.ts`: `soil_moisture` 센서 및 스마트팜 액추에이터 타입 정의
-3. `src/core/adapter/MockIoTAdapter.ts`: 토양수분(30%~80%) 변동 시뮬레이션 로직 추가
-4. `src/components/3d/SmartFarmRoom.tsx`: 온실 돔, 화분 식물, 환기 돔 개폐 애니메이션 3D 컴포넌트 신규 작성 코드</pre>
-      </div>
-
-      <!-- 프롬프트 2 (스마트팩토리) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 2. [스마트팩토리] 컨베이어 벨트 및 3단 경고등</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 원본 코드 스니펫 포함</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-factory', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-factory">당신은 Next.js 14 + R3F + CircuitPython 기반 스마트홈 플랫폼의 전문 개발자입니다.
-우리는 이 플랫폼을 [스마트팩토리(Smart Factory)] 주제로 개조하려고 합니다.
-
-### [1. 변경 목표]
-1. 하드웨어:
-   - Pico 2 W의 Cds 조도 센서를 '생산 라인 통과 감지 센서'로 활용합니다.
-   - 서보모터 SG90(GP16)은 컨베이어 벨트 위 불량품을 밀어내는 '스마트 푸셔(Pusher)' 암으로 역할을 바꿉니다.
-   - RGB LED(GP18,19,20)는 공장 상태를 알리는 '3단 타워 램프'로 동작합니다 (초록: 정상, 노랑: 대기, 빨강: 정지).
-2. 3D 공간:
-   - 금속 질감의 컨베이어 벨트 메쉬를 만들고, 서보모터 각도에 따라 푸셔가 물품을 밀어내는 애니메이션을 연동합니다.
-
-기존 Zustand 스토어(`useIoTStore.ts`)와 R3F 씬 구조를 유지하면서 다음 2개 파일의 수정 코드를 작성해주세요:
-1. `src/components/3d/SmartFactoryRoom.tsx` (컨베이어 벨트 및 푸셔 암 3D 컴포넌트)
-2. `firmware/circuitpython/code.py` (푸셔 제어 및 타워 램프 상태 코드)</pre>
-      </div>
-
-      <!-- 프롬프트 3 (초음파 거리센서 추가) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 3. [신규 센서] 초음파 거리 센서(HC-SR04) 추가하기</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 핀맵 & UI 연동 포함</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-ultrasonic', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-ultrasonic">당신은 Pico 2 W + CircuitPython 및 Next.js IoT 플랫폼 개발자입니다.
-Pico 2 W에 거리 측정을 위한 초음파 센서(HC-SR04)를 추가하고 웹 대시보드에 연동하려고 합니다.
-
-- 회로 연결: Trig = board.GP14, Echo = board.GP13 (2초 주기 측정)
-- 현재 code.py에는 `@server.route("/api/status")`가 있고 프론트엔드에는 `useIoTStore.ts`와 `MockIoTAdapter.ts`가 있습니다.
-
-다음 4개 파일의 수정 코드를 작성해주세요:
-1. `firmware/circuitpython/code.py`: `adafruit_hcsr04.HCSR04`로 거리를 측정하고 `/api/status` JSON에 `"distance_cm"` 필드 추가
-2. `src/core/types/iot.ts`: `sensors.distance_cm` 타입 추가
-3. `src/core/adapter/MockIoTAdapter.ts`: 10~150cm 사이의 거리 시뮬레이션 난수 생성
-4. `src/components/ui/SensorOutputPanel.tsx`: 측정된 거리를 실시간 게이지 바로 표시하고 CSV 항목에 추가</pre>
-      </div>
-
-      <!-- 프롬프트 4 (창문 블라인드) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 4. [3D 수정] 스마트 도어를 창문 블라인드로 교체하기</span>
-          <button class="copy-btn" onclick="copyFullPrompt('prompt-blind', this)">
-            📋 원클릭 풀 복사
-          </button>
-        </div>
-        <pre id="prompt-blind">스마트홈 3D 씬의 `src/components/3d/DoorObject.tsx`를 창문 블라인드(`WindowBlindObject.tsx`)로 교체하고 싶습니다.
-서보모터 reportedAngle(0° ~ 180°) 값에 따라:
-- 0°일 때: 블라인드가 완전히 내려와 닫힌 상태
-- 90°일 때: 블라인드 날개들이 수평으로 회전하여 햇빛이 들어오는 상태
-- 180°일 때: 블라인드가 위로 완전히 올라간 상태
-를 부드러운 Drei/R3F `useFrame` 애니메이션으로 구현한 완성된 `WindowBlindObject.tsx` 코드를 작성해주세요.</pre>
-      </div>
-
-      <!-- 프롬프트 5 (에러 디버깅) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 5. [디버깅] AI에게 에러 해결 요청하기</span>
-          <button class="copy-btn" onclick="copyFullPrompt('prompt-debug', this)">
-            📋 원클릭 풀 복사
-          </button>
-        </div>
-        <pre id="prompt-debug">우리는 Next.js 14 + React Three Fiber + Zustand 기반 IoT 플랫폼을 수정하고 있는 고등학생 팀입니다.
-새로운 센서를 추가하는 도중 아래와 같은 에러가 발생했습니다:
-
-[여기에 터미널 에러 메시지 또는 브라우저 콘솔 로그를 붙여넣으세요]
-
-내가 수정한 파일의 코드는 다음과 같습니다:
-[여기에 수정한 파일 내용 붙여넣기]
-
-어느 부분에서 데이터 흐름(어댑터 -> 스토어 -> 컴포넌트)이 어긋났는지 원인을 짚어주고, 올바르게 수정한 파일 코드를 제시해주세요.</pre>
-      </div>
-
-      <!-- 프롬프트 6 (스마트 물류 & 보안) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 6. [스마트 물류 & 보안] 차량 진입 차단기(서보) 및 감지 센서 연동</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 3D 차단기 & 신호등</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-security', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-security">당신은 Next.js 14 + React Three Fiber + Zustand + CircuitPython 기반 IoT 플랫폼 전문 개발자입니다.
-우리는 이 플랫폼을 [스마트 물류 & 보안 주차 관제 시스템(Smart Security & Logistics)]으로 개조하려고 합니다.
-
-### [1. 변경 목표]
-1. 하드웨어:
-   - Pico 2 W의 Cds 광센서 또는 초음파 센서(GP26)를 '차량 진입 감지 센서'로 활용합니다.
-   - 서보모터 SG90(GP16)은 주차장 입구 '차량 차단기 바(Barrier Arm)'로 동작합니다.
-     (차량 감지 시 0° 수평 차단 상태 -> 90° 수직 상승 개방 후 5초 뒤 자동 하강)
-   - RGB LED(GP18,19,20)는 주차장 진입 신호등(초록: 진입 가능, 빨강: 진입 차단/만차)으로 동작합니다.
-2. 3D 가상 공간:
-   - 도로 아스팔트 바닥과 노란색 안전 차선, 차량 차단기 기둥 및 회전하는 차단봉 메쉬를 구현합니다.
-   - 서보모터 각도에 따라 차단봉이 부드럽게 위로 열리고 닫히는 R3F 애니메이션을 연동합니다.
-
-기존 스토어(`useIoTStore.ts`) 구조를 준수하며 다음 3개 파일의 수정 코드를 작성해주세요:
-1. `firmware/circuitpython/code.py`: 차량 감지 및 차단기 제어 코드
-2. `src/components/3d/SmartSecurityRoom.tsx`: 도로 바닥, 차단기 기둥, 회전 차단봉 3D 컴포넌트
-3. `src/core/adapter/MockIoTAdapter.ts`: 가상 차량 진입 이벤트 및 거리/조도 시뮬레이션</pre>
-      </div>
-
-      <!-- 프롬프트 7 (환경 & 화재 안전) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 7. [환경 & 화재 안전] 가스/불꽃 감지 및 비상 사이렌 경보 시스템</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 긴급 방화문 & 사이렌</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-fire', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-fire">당신은 Pico 2 W + CircuitPython 및 Next.js 14 IoT 대시보드 개발자입니다.
-우리는 화재 및 유해가스 누출을 조기 감지하는 [스마트 방재 & 화재 안전 시스템]을 구축하려고 합니다.
-
-### [1. 변경 목표]
-1. 하드웨어:
-   - 가스 센서(MQ-2/MQ-5 등)를 Pico 2 W의 GP27(ADC1)에 연결하여 0~1000ppm 농도를 계측합니다.
-   - 디지털 불꽃 감지 센서를 GP14에 연결하여 화재 불꽃 유무(HIGH/LOW)를 감지합니다.
-   - 화재 또는 가스 위험치 감지 시:
-     - SG90 서보모터(GP16)가 비상 탈출 방화문을 즉각 90도 개방합니다.
-     - RGB LED(GP18,19,20)가 고주파 적색 점멸(긴급 사이렌) 상태로 전환됩니다.
-2. 웹 대시보드 UI:
-   - `SensorOutputPanel.tsx`에 '가스 농도(ppm)' 및 '화재 감지 상태(정상/화재 경보)' 위젯을 추가합니다.
-   - CSV 내보내기 시 가스 농도 시계열 데이터를 포함합니다.
-
-다음 4개 파일의 수정 코드를 작성해주세요:
-1. `firmware/circuitpython/code.py`: 가스(GP27) 및 불꽃(GP14) 계측과 긴급 방화문/사이렌 제어
-2. `src/core/types/iot.ts`: 가스 농도 및 화재 상태 인터페이스 추가
-3. `src/core/adapter/MockIoTAdapter.ts`: 가스 농도 변동 및 30초 주기 모의 화재 이벤트 시뮬레이션
-4. `src/components/ui/SensorOutputPanel.tsx`: 화재 경보 배지 및 가스 농도 게이지 UI 연동</pre>
-      </div>
-
-      <!-- 프롬프트 8 (스마트 펫케어) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 8. [스마트 헬스케어 & 반려동물] 자동 급식기 서보 및 수위/무게 센서</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 사료 디스펜서</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-pet', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-pet">당신은 Next.js 14 + R3F + Zustand 기반 IoT 플랫폼 전문 개발자입니다.
-우리 팀은 [스마트 펫케어 & 자동 급식/급수 시스템(Smart Pet Care)]을 제작하려고 합니다.
-
-### [1. 변경 목표]
-1. 하드웨어:
-   - SG90 서보모터(GP16)는 사료 디스펜서 밸브 역할을 수행합니다 (급식 명령 시 0° -> 60°로 1초간 열렸다가 복귀).
-   - 아날로그 수위 센서 또는 로드셀 무게 센서를 GP27(ADC1)에 연결하여 남은 사료량(0~100%)을 실시간 계측합니다.
-   - Cds 센서(GP26)로 반려동물 접근(어두워짐)을 감지하고, RGB LED는 야간 무드등으로 동작합니다.
-2. 3D 가상 공간:
-   - 사료 저장 통, 사료 그릇 메쉬를 3D 공간에 배치하고, 급식 동작 시 사료가 그릇에 떨어지는 효과를 연동합니다.
-
-기존 플랫폼 구조를 유지하면서 다음 3개 파일의 수정 코드를 작성해주세요:
-1. `firmware/circuitpython/code.py`: 1초간 열렸다가 닫히는 급식 서보 액션 및 사료량 계측
-2. `src/components/3d/SmartPetRoom.tsx`: 사료 디스펜서와 물그릇 3D 모델 컴포넌트
-3. `src/core/adapter/MockIoTAdapter.ts`: 사료 투출 후 잔여량 감소 시뮬레이션 로직</pre>
-      </div>
-
-      <!-- 프롬프트 9 (3D 가구 & 설비 재배치) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 9. [3D 인테리어] 3D 방 구조 변경 및 가구/설비 재배치</span>
-          <button class="copy-btn" onclick="copyFullPrompt('prompt-3d-custom', this)">
-            📋 원클릭 풀 복사
-          </button>
-        </div>
-        <pre id="prompt-3d-custom">우리는 Next.js 14 + React Three Fiber (R3F) + Drei 기반 스마트홈 대시보드를 개발 중인 학생 팀입니다.
-현재 `src/components/3d/SmartHomeRoom.tsx`에 있는 기본 스마트홈 방 구조(벽면, 바닥, 침대, 책상)를 우리 팀 주제에 어울리는 새로운 공간으로 완전히 재구성하고 싶습니다.
-
-[우리 팀이 원하는 3D 공간 콘셉트]:
-- 공간 주제: [예: 병원 스마트 병실 / 스마트 사무실 / 물류 보관 창고 / 미래형 연구실 중 선택]
-- 변경하고 싶은 바닥 및 벽면 재질/색상: [예: 광택 있는 연회색 타일 바닥, 유리 파티션 벽]
-- 새로 배치하고 싶은 3D 오브젝트(기본 박스/실린더 메쉬 조합): [예: 연구용 분석 장비 테이블, 선반 랙 등]
-- 조명 및 센서 노드 유지: DoorObject, LightObject, 센서 플로팅 배지와 자연스럽게 어우러지도록 배치
-
-R3F의 Drei 그림자, 회전, 머티리얼 속성을 최적화하여 프레임 드랍 없이 미려하게 렌더링되는 새로운 `SmartHomeRoom.tsx`의 전체 코드를 작성해주세요.</pre>
-      </div>
-
-      <!-- 프롬프트 10 (하드웨어 Wi-Fi 연동 트러블슈팅) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 10. [Pico 2 W Wi-Fi 연동] 네트워크 및 CORS 트러블슈팅</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ 네트워크 연결 가이드</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-wifi-debug', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-wifi-debug">우리는 Raspberry Pi Pico 2 W (CircuitPython 9.x/10.x)와 Next.js 14 브라우저 대시보드를 Wi-Fi로 연동하고 있는 고등학생 팀입니다.
-브라우저 대시보드에서 '하드웨어 모드'로 전환하고 Pico 2 W의 IP 주소를 입력했는데 다음 중 하나의 문제가 발생했습니다:
-
-[현재 겪고 있는 증상 선택]:
-1. [ ] 브라우저 콘솔에 'Access-Control-Allow-Origin' CORS 에러가 발생함
-2. [ ] 대시보드 상태가 계속 '연결 대기(connecting)'에서 멈춰있고 센서값이 들어오지 않음
-3. [ ] Pico 2 W 시리얼 모니터에 IP 주소는 뜨는데 웹 브라우저에서 `http://<PICO_IP>/api/status` 접속 시 응답이 없음
-4. [ ] 학교 Wi-Fi 환경에서 PC와 Pico 2 W 간 통신이 차단됨
-
-현재 우리 팀의 `settings.toml` 및 `firmware/circuitpython/code.py`의 서버 라우트 코드는 다음과 같습니다:
-[여기에 본인의 settings.toml 및 code.py 라우트 부분 붙여넣기]
-
-학교 네트워크(AP 격리 환경) 및 핫스팟 환경에서 100% 통신을 성공시키는 단계별 해결책과 code.py의 올바른 CORS 헤더 설정 코드를 안내해주세요.</pre>
-      </div>
-
-      <!-- 프롬프트 11 (하드웨어 모의 연동 & 에러 디버깅) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 11. [하드웨어 모의 연동 & 에러 디버깅] Pico 2 W 에러 추적 및 복구 상태 머신</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ Mock 서버 & 에러 핸들링</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-mock-debug', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-mock-debug">당신은 Next.js 14 + Zustand + CircuitPython 임베디드 IoT 플랫폼 전문 디버거입니다.
-우리는 학교 실습실에서 실제 Pico 2 W 보드 없이도 100% 신뢰성 있는 하드웨어 통신을 테스트하고, 통신 단절 및 오입력 상황을 안전하게 복구하고 싶습니다.
-
-[우리 팀의 요구사항]:
-1. 모의 서버 연동 (`firmware/mock_pico_server.js`):
-   - Node.js 내장 http 모듈 기반으로 `http://127.0.0.1:5050`에서 동작하며, `GET /api/status`, `POST /api/servo`, `POST /api/rgb` 규격을 준수합니다.
-2. 클라이언트 어댑터 예외 처리 (`src/core/adapter/CircuitPythonAdapter.ts`):
-   - 잘못된 IP나 오프라인 IP 입력 시 영구 대기(무한 스피너)에 빠지지 않고 즉시 'error' 상태로 전이합니다.
-   - 5초 주기 `staleCheckInterval`을 구동하여 10초 이상 미응답 센서를 '오프라인(isStale: true)'으로 표시합니다.
-   - 사용자가 `http://` 접두사나 끝 슬래시를 포함해 IP를 입력해도 자동으로 주소를 정규화(sanitization)합니다.
-3. 자동 복구 (Failover & Recovery):
-   - 대시보드 IP 모달에서 올바른 IP로 수정 시 페이지 새로고침 없이 즉시 정상 통신으로 복구됩니다.
-
-이 안정성 패턴을 우리 팀의 새로운 센서/액추에이터(예: 가스 센서, 수위 밸브)에 맞게 확장할 수 있도록, 어댑터 및 모의 서버 확장 코드를 작성해주세요.</pre>
-      </div>
-
-      <!-- 프롬프트 12 (3D UI 최적화 & 모달 레이어링) -->
-      <div class="prompt-box">
-        <div class="prompt-title">
-          <span>프롬프트 12. [3D UI 최적화] Drei 3D 플로팅 말풍선 및 반응형 모달 레이어링</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="prompt-badge">✓ Drei Html z-index 제어</span>
-            <button class="copy-btn" onclick="copyFullPrompt('prompt-3d-layering', this)">
-              📋 원클릭 풀 복사
-            </button>
-          </div>
-        </div>
-        <pre id="prompt-3d-layering">우리는 React Three Fiber (R3F) + Drei 기반 3D 가상 공간 위에 실시간 알림 말풍선과 관리자 승인 카드를 띄우고 있는 학생 팀입니다.
-Drei의 `<Html>` 컴포넌트가 브라우저 최상단 모달 다이얼로그(설정창, 장비 관리창)를 가리지 않도록 완벽한 3D UI 레이어링을 구축하고 싶습니다.
-
-[구현 목표]:
-1. z-index 간섭 방지: `<Html zIndexRange={[10, 0]}>`로 최대 z-index를 10 이하로 제한하고, 전면 모달 컨테이너는 `z-[100]`으로 격상합니다.
-2. 모달 열림 감지 시 자동 숨김: 상위 `isModalOpen` 상태를 전달받아 모달이 열리면 3D 말풍선이 즉시 언마운트(null 반환)되도록 합니다.
-3. 4.5초 자동 소멸 및 즉시 닫기: '승인 완료' 상태가 되면 4.5초 타이머로 자동 소멸되고, 우측 상단 `✕` 버튼으로 즉시 닫을 수 있습니다.
-
-`src/components/3d/NeedsYouCallout3D.tsx`의 전체 완성 코드를 우리 팀 콘셉트에 맞게 제공해주세요.</pre>
-      </div>
-    </section>
-
-    <!-- 8. FAQ & 트러블슈팅 -->
-    <section id="sec-faq">
-      <h2>8. 트러블슈팅 & FAQ</h2>
-      <div class="card">
-        <h3>Q. AI가 만들어준 코드를 넣었는데 화면에 값이 안 뜹니다!</h3>
-        <p>
-          AI가 스토어의 키 이름을 다르게 지었을 가능성이 높습니다. <code>src/core/types/iot.ts</code>의 키 이름과 <code>MockIoTAdapter.ts</code>에서 호출하는 <code>updateSensor('키이름', 값)</code>의 키 이름이 알파벳 대소문자까지 정확히 일치하는지 확인하세요.
-        </p>
-      </div>
-      <div class="card">
-        <h3>Q. Pico 2 W의 IP를 입력해도 '연결 대기' 상태에서 멈춥니다.</h3>
-        <p>1) PC와 Pico 2 W가 <strong>동일한 Wi-Fi 공유기</strong>에 접속되어 있는지 확인하세요.</p>
-        <p>2) 학교 와이파이에서 기기 간 통신(AP Isolation)이 막혀있을 경우, 스마트폰 핫스팟에 PC와 Pico를 함께 연결하면 100% 즉시 통신됩니다.</p>
-      </div>
-      <div class="card">
-        <h3>Q. 3D 화면이 검게 나오고 렌더링되지 않습니다.</h3>
-        <p>브라우저 설정에서 <strong>[하드웨어 가속 사용]</strong>이 켜져 있는지 확인하고 크롬(Chrome) 또는 엣지(Edge) 브라우저를 사용하세요.</p>
-      </div>
-      <div class="card">
-        <h3>Q. 3D 화면 중앙의 '승인 완료' 말풍선이 설정창이나 모달을 가려 클릭이 안 돼요!</h3>
-        <p>
-          Three.js Drei의 <code>&lt;Html&gt;</code> 기본 z-index가 약 1600만으로 매우 높게 잡혀있어서 발생했던 문제였습니다. 
-          최신 플랫폼에서는 <code>zIndexRange={[10, 0]}</code> 적용 및 상위 모달 감지(<code>isModalOpen</code>)를 통해 모달 창이 열리면 3D 말풍선이 즉시 숨겨지도록 완벽히 패치되었습니다. 
-          또한 4.5초 뒤 자동 소멸되며 우측 상단 <code>✕</code> 버튼으로 언제든 즉시 닫을 수 있습니다.
-        </p>
-      </div>
-      <div class="card">
-        <h3>Q. Pico 2 W의 IP를 잘못 입력했을 때 화면이 멈추거나 먹통이 되지 않나요?</h3>
-        <p>
-          최신 <code>CircuitPythonAdapter.ts</code>는 요청 실패 시 즉시 안전하게 <strong>'오류 (ERR)'</strong> 상태로 전이되어 무한 대기(스피너 고착)를 완벽히 방지합니다. 
-          상단 연결 설정 모달에서 올바른 IP 주소로 수정하면 새로고침 없이 즉시 정상 녹색 뱃지로 자동 복구됩니다.
-        </p>
-      </div>
-      <div class="card">
-        <h3>Q. 학교 실습실이나 집에서 실제 Pico 보드가 없을 때 하드웨어 연동을 어떻게 테스트하나요?</h3>
-        <p>
-          프로젝트에 기본 제공되는 <code>node firmware/mock_pico_server.js</code>를 실행하세요! 
-          포트 5050에 모의 CircuitPython REST 서버가 구동되며, 대시보드 IP 입력창에 <code>127.0.0.1:5050</code>을 입력하고 '하드웨어 연동' 모드를 켜면 
-          실물 보드와 100% 동일하게 센서 텔레메트리 수신, SG90 서보모터 회전, RGB LED 제어가 동작합니다.
-        </p>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    function doCopyText(text, btn, successMsg) {
-      if (!navigator.clipboard) {
-        // 폴백 클립보드 복사 (구형 브라우저 또는 특수 환경)
-        const tempTa = document.createElement('textarea');
-        tempTa.value = text;
-        document.body.appendChild(tempTa);
-        tempTa.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempTa);
-        showBtnFeedback(btn, successMsg);
-        return;
-      }
       navigator.clipboard.writeText(text).then(() => {
-        showBtnFeedback(btn, successMsg);
-      }).catch(err => {
-        alert('클립보드 복사 실패: ' + err);
+        const originalText = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '✓ 마스터 컨텍스트 복사 완료! AI 채팅창에 붙여넣으세요';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = originalText;
+        }, 3000);
       });
     }
 
-    function showBtnFeedback(btn, successMsg) {
-      const orig = btn.innerHTML;
-      btn.innerHTML = successMsg;
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.innerHTML = orig;
-        btn.classList.remove('copied');
-      }, 2500);
-    }
-
-    // 마스터 풀 컨텍스트 복사 (임베디드 데이터 우선 -> fetch 폴백 -> 프롬프트 1 폴백)
-    function copyMasterContext(btn) {
-      const inlineEl = document.getElementById('master-context-data');
-      if (inlineEl && inlineEl.value.trim().length > 500) {
-        doCopyText(inlineEl.value.trim(), btn, '✅ 플랫폼 전체 마스터 컨텍스트 복사 완료!');
-        return;
-      }
-      fetch('/context_master.txt')
-        .then(res => {
-          if (!res.ok) throw new Error();
-          return res.text();
-        })
-        .catch(() => {
-          return document.getElementById('prompt-smart-farm').innerText;
-        })
-        .then(text => {
-          doCopyText(text, btn, '✅ 플랫폼 전체 마스터 컨텍스트 복사 완료!');
-        });
-    }
-
+    // Generic Prompt Copy Function
     function copyFullPrompt(elementId, btn) {
       const el = document.getElementById(elementId);
-      if (!el) {
-        alert('프롬프트 요소를 찾을 수 없습니다: ' + elementId);
-        return;
-      }
-      doCopyText(el.innerText, btn, '✅ 풀 프롬프트 복사 완료!');
+      if (!el) return;
+      const text = el.innerText || el.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = '✓ 복사 완료!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = originalText;
+        }, 2500);
+      });
     }
 
-    // ScrollSpy for Sidebar Links
-    window.addEventListener('scroll', () => {
-      const sections = document.querySelectorAll('section');
-      const navLinks = document.querySelectorAll('nav a');
-      let current = '';
-      sections.forEach(sec => {
-        const top = sec.offsetTop - 100;
-        if (window.scrollY >= top) {
-          current = sec.getAttribute('id');
-        }
-      });
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + current) {
-          link.classList.add('active');
-        }
-      });
+    // Initialize View on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSlideView();
     });
   </script>
 </body>
