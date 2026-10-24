@@ -332,8 +332,9 @@
         <li><a href="#sec-vibe-core">3. 왜 AI가 엉뚱한 코드를 짤까? (Context 원리)</a></li>
         <li><a href="#sec-recipes">4. 팀별 프로젝트 주제 변경 실전 레시피</a></li>
         <li><a href="#sec-ui-features">⭐ 5. 대시보드 UI 기능 구현 & 팀별 커스터마이징 가이드</a></li>
-        <li><a href="#sec-prompts">6. 실전 프롬프트 12선 (원클릭 풀 복사)</a></li>
-        <li><a href="#sec-faq">7. 트러블슈팅 & FAQ</a></li>
+        <li><a href="#sec-context-guide">⭐ 6. [학생 실습] 팀별 Context 문장 작성법 & 예시문</a></li>
+        <li><a href="#sec-prompts">7. 실전 완성형 프롬프트 12선 (원클릭 풀 복사)</a></li>
+        <li><a href="#sec-faq">8. 트러블슈팅 & FAQ</a></li>
       </ul>
     </nav>
   </aside>
@@ -1173,9 +1174,207 @@ return (
       </div>
     </section>
 
-    <!-- 6. 실전 프롬프트 12선 (원클릭 풀 복사) -->
+    <!-- 6. [학생 실습] 팀별 Context 문장 작성법 & 주제별 Context 예시문 (신규) -->
+    <section id="sec-context-guide">
+      <h2>⭐ 6. [학생 실습] 팀별 Context 문장 작성 가이드 & 주제별 Context 예시문</h2>
+      <p>
+        모의 수업이나 실제 팀 프로젝트를 진행할 때, <strong>"우리 팀만의 독창적인 아이디어"</strong>를 어떻게 AI에게 설명해야 할까요?<br>
+        기존 12선에 없는 완전히 새로운 주제라도, 아래 <strong>[4단계 Context 구조 설계 공식]</strong>과 <strong>[빈칸 완성형 템플릿]</strong>을 활용하면 
+        누구나 3분 만에 생성형 AI(ChatGPT, Claude, Gemini)로부터 100% 작동하는 최적화 코드를 이끌어낼 수 있습니다!
+      </p>
+
+      <!-- 6-1. 4단계 Context 구조 설계 공식 -->
+      <div class="card" style="border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.08);">
+        <h3 style="color: #60a5fa; margin-top:0;">📐 6-1. 생성형 AI를 움직이는 '4단계 Context 구조 설계 공식'</h3>
+        <p style="font-size:13.5px; color:#cbd5e1;">생성형 AI에게 질문할 때는 아래 4개 블록을 순서대로 하나의 메시지에 묶어서 전송해야 환각 없이 우리 플랫폼에 맞는 코드가 나옵니다:</p>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin-top:14px;">
+          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
+            <div style="font-weight:700; color:#38bdf8; font-size:13.5px; margin-bottom:4px;">
+              [블록 1: AI 역할 & 기반 플랫폼 선언]
+            </div>
+            <div style="color:#cbd5e1; font-size:13px;">
+              "당신은 Next.js 14 + Three.js(React Three Fiber) + Zustand + Raspberry Pi Pico 2 W(CircuitPython 9.x)로 구동되는 스마트홈 3D IoT 공통 플랫폼의 전문 개발자입니다. 우리는 <code>PLATFORM_FULL_CONTEXT.md</code> 아키텍처를 기반으로 팀 프로젝트를 개발하고 있습니다."
+            </div>
+          </div>
+
+          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
+            <div style="font-weight:700; color:#34d399; font-size:13.5px; margin-bottom:4px;">
+              [블록 2: 우리 팀 프로젝트 주제 & 하드웨어 핀맵 명세]
+            </div>
+            <div style="color:#cbd5e1; font-size:13px;">
+              "우리 팀의 주제는 <strong>[스마트 OO 시스템]</strong>입니다.<br>
+              Pico 2 W 하드웨어 구성:<br>
+              - 신규 센서: [센서 부품명], [핀 번호(예: GP27 ADC1)], [측정 물리량 및 단위(예: 수위 0~100%)]<br>
+              - 기존 센서 유지: [Cds 조도(GP26), DHT11 온습도(GP15) 등 활용 여부]<br>
+              - 액추에이터: SG90 서보모터(GP16)는 [역할: 예: 사료 밸브 개폐], RGB LED(GP18~20)는 [역할: 예: 동작 상태등]"
+            </div>
+          </div>
+
+          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
+            <div style="font-weight:700; color:#fbbf24; font-size:13.5px; margin-bottom:4px;">
+              [블록 3: 3D 가상 공간 및 대시보드 UI 연동 요구사항]
+            </div>
+            <div style="color:#cbd5e1; font-size:13px;">
+              "- 3D 가상 공간: 기존 스마트홈 방 메쉬 대신 [바닥/벽면 콘셉트, 새 가구/장비 3D 오브젝트]를 배치하고, 서보 각도에 따라 [회전/개폐 R3F 애니메이션]을 연동해주세요.<br>
+              - 대시보드 UI: 우측 <code>SensorOutputPanel.tsx</code>에 [신규 센서 실시간 게이지]를 추가하고, CSV 내보내기 컬럼에 포함해주세요."
+            </div>
+          </div>
+
+          <div style="background: #0f172a; padding: 14px 18px; border-radius: 10px; border: 1px solid #334155;">
+            <div style="font-weight:700; color:#f43f5e; font-size:13.5px; margin-bottom:4px;">
+              [블록 4: 수정 대상 파일 경계(Change Boundary) 지정]
+            </div>
+            <div style="color:#cbd5e1; font-size:13px;">
+              "반드시 기존 Zustand 단일 스토어(<code>useIoTStore.ts</code>) 및 2-Phase Acknowledgment 규칙을 준수하며, 다음 핵심 4개 파일의 전체 완성 코드를 제공해주세요:<br>
+              1. <code>firmware/circuitpython/code.py</code> (하드웨어 펌웨어)<br>
+              2. <code>src/core/types/iot.ts</code> (타입 정의)<br>
+              3. <code>src/core/adapter/MockIoTAdapter.ts</code> (시뮬레이터 난수 로직)<br>
+              4. <code>src/components/3d/우리팀Room.tsx</code> 및 <code>SensorOutputPanel.tsx</code> (3D & UI)"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-2. [빈칸 채우기] 학생용 맞춤 Context 완성 템플릿 -->
+      <div class="card" style="border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.08);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <h3 style="color: #34d399; margin:0;">📝 6-2. [빈칸 채우기] 우리 팀 맞춤형 Context 완성 템플릿</h3>
+          <button class="copy-btn" onclick="copyFullPrompt('prompt-custom-template', this)" style="background:#059669;">
+            📋 빈칸 템플릿 원클릭 복사
+          </button>
+        </div>
+        <p style="font-size:13px; color:#cbd5e1; margin-bottom:12px;">
+          아래 박스 내용을 복사한 뒤 메모장이나 AI 채팅창에서 대괄호 <code>[   ]</code>로 묶인 부분만 우리 팀의 아이디어로 채워 넣어서 AI에게 전송하세요!
+        </p>
+        <pre id="prompt-custom-template">당신은 Next.js 14 + R3F(Three.js) + Zustand + CircuitPython(Raspberry Pi Pico 2 W) 기반 스마트홈 3D IoT 플랫폼 전문 개발자입니다.
+우리는 `PLATFORM_FULL_CONTEXT.md` 아키텍처를 기반으로 팀 프로젝트를 진행 중인 고등학생 팀입니다.
+
+우리 팀 프로젝트 주제: [프로젝트 주제명 입력: 예: 스마트 펫케어 급식기 / 스마트 빗물 재활용 시스템 / 스마트 무인 도서관]
+
+### [1. 우리 팀 하드웨어 핀맵 명세]
+1. 신규 센서:
+   - 센서명: [센서 이름 예: 초음파 거리 센서 / 토양 수분 센서 / 불꽃 감지 센서]
+   - 핀 번호: [Pico 2 W 핀: 예: GP27 (ADC1)]
+   - 측정 범위 및 단위: [예: 0~100cm / 0~100% / 정상·경보 0, 1]
+2. 액추에이터 동작:
+   - SG90 서보모터 (GP16): [서보모터가 움직일 역할 예: 사료 투출 밸브 0도->60도 / 환기 돔 개폐 0도->90도 / 차단봉 0도->90도]
+   - RGB LED (GP18, GP19, GP20): [LED가 나타낼 상태 예: 녹색(정상), 노란색(동작 중), 빨간색(주의/경보)]
+   - 기존 센서 활용: [Cds 조도 센서 GP26 / DHT11 온습도 GP15 중 유지할 항목]
+
+### [2. 3D 가상 공간 및 대시보드 UI 연동 요구사항]
+1. 3D 가상 공간 (R3F):
+   - 공간 콘셉트: [예: 펫룸 / 농업 온실 / 도서관 열람실 / 공장 생산라인]
+   - 배치할 3D 메쉬 오브젝트: [예: 사료통, 급수 그릇 / 스마트 베드 / 책상과 의자 / 컨베이어 벨트]
+   - 서보모터 연동 R3F 애니메이션: [서보 각도 변화에 따라 3D 오브젝트가 회전하거나 열리는 동작]
+2. 대시보드 UI 패널:
+   - `SensorOutputPanel.tsx`에 신규 센서 게이지(값, 단위, 정상/주의 범위)를 추가해주세요.
+   - CSV 파일 내보내기 시 신규 센서 계측 데이터 열을 포함해주세요.
+
+### [3. 요청 파일 및 개발 규칙]
+Zustand 단일 스토어(`useIoTStore.ts`)의 2-Phase Acknowledgment 규칙과 타입을 준수하며, 다음 4개 파일의 완성된 전체 코드를 작성해주세요:
+1. `firmware/circuitpython/code.py`: 신규 센서 계측 및 `/api/status` JSON 반환, 서보/LED 제어
+2. `src/core/types/iot.ts`: 신규 센서 데이터 인터페이스 및 updateSensor 유니온 타입 추가
+3. `src/core/adapter/MockIoTAdapter.ts`: 하드웨어 부재 시에도 동작할 자연스러운 난수 시뮬레이터 로직
+4. `src/components/3d/TeamCustomRoom.tsx`: 우리 팀 전용 3D 씬 컴포넌트 전체 코드</pre>
+      </div>
+
+      <!-- 6-3. 창의적 팀별 프로젝트 주제별 Context 예시 문장 6선 -->
+      <div class="card" style="border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.08);">
+        <h3 style="color: #fbbf24; margin-top:0;">💡 6-3. 다양한 창의적 주제별 Context 예시 문장 6선 (원클릭 복사)</h3>
+        <p style="font-size:13px; color:#cbd5e1; margin-bottom:14px;">
+          실제 고등학교 팀 프로젝트에서 가장 많이 선택하는 6가지 창의적 주제의 완성형 Context 문장입니다. 복사하여 바로 AI에게 제시해보세요!
+        </p>
+
+        <!-- 예시 1: 스마트 실버케어 & 응급 안전 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 1. [스마트 실버케어 & 독거노인 안심] 낙상 감지 센서 및 비상 호출문</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-silver', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-silver">우리 팀은 고령화 사회를 위한 [스마트 실버케어 & 독거노인 안심 안부 확인 시스템]을 제작합니다.
+- 하드웨어: Pico 2 W의 GP27(ADC1)에 충격/가속도 센서를 연결하여 침대에서의 낙상(Fall Detection) 충격을 감지하고, GP14에는 비상 호출 버튼을 연결합니다. SG90 서보모터(GP16)는 긴급 상황 시 구조 대원이 진입할 수 있도록 '안심 자동 도어록'을 90도 개방하며, RGB LED(GP18~20)는 적색 고주파 사이렌으로 점멸합니다.
+- 3D 가상 공간: 어르신 생활 침실(침대, 비상벨, 보행 보조기구) 메쉬를 배치하고, 낙상 감지 이벤트 발생 시 침대 주변에 적색 위험 오라 효과를 3D로 렌더링해주세요.
+- 대시보드 UI: `SensorOutputPanel.tsx`에 '낙상 위험도(G-Force)' 게이지와 '비상 호출 상태' 배지를 추가하고, 보호자 알림 로그를 스트림에 출력해주세요.</pre>
+        </div>
+
+        <!-- 예시 2: 스마트 도서관 & 스터디 카페 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 2. [스마트 도서관 & 스터디 카페] 좌석 재실 감지 및 자동 맞춤 조도</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-library', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-library">우리 팀은 에너지 절감형 [스마트 무인 도서관 & 맞춤형 스터디 카페 열람실]을 구현합니다.
+- 하드웨어: Cds 조도 센서(GP26)로 열람실 자연 채광을 측정하고, 초음파 센서(GP27)로 의자 좌석의 이용자 착석(재실 여부)을 0~80cm 거리로 판별합니다. SG90 서보모터(GP16)는 이용자 맞춤형 독서대 각도(0~60도) 자동 조절 장치로 동작하며, RGB LED(GP18~20)는 집중력을 높이는 웜화이트(4000K) 개인 스탠드 조명으로 조도를 자동 보정합니다.
+- 3D 가상 공간: 원목 스터디 책상, 의자, 책꽂이 메쉬를 배치하고, 사람이 착석하면 책상 스탠드 조명이 켜지며 3D 독서대가 틸팅되는 인터랙션을 구현해주세요.
+- 대시보드 UI: 좌석 이용 현황(사용 중/빈 좌석) 및 일일 독서 시간 누적 시계열 데이터를 패널에 표시해주세요.</pre>
+        </div>
+
+        <!-- 예시 3: 스마트 양계장 & 축사 모니터링 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 3. [스마트 축산 & 양계장] 암모니아 유해가스 감지 및 자동 환기/사료 공급</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-farm', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-farm">우리 팀은 스마트 축산 프로젝트로 [스마트 양계장 유해가스 모니터링 및 자동 환기 시스템]을 제작합니다.
+- 하드웨어: MQ-137 암모니아/유해가스 센서를 Pico 2 W의 GP27(ADC1)에 연결하여 0~100ppm 농도를 계측하고, DHT11(GP15)로 축사 온습도를 실시간 감시합니다. 가스 농도 25ppm 초과 또는 내부 온도 30도 초과 시 SG90 서보모터(GP16)가 환기 셔터를 90도 개방하며, RGB LED는 황색 환기 팬 가동 표시등으로 동작합니다.
+- 3D 가상 공간: 축사 지붕 트러스, 환기 셔터 갤러리 창문, 사료 공급 라인을 3D로 모델링하고 셔터 개폐를 서보 각도와 연동해주세요.
+- 대시보드 UI: 암모니아 ppm 농도 위험 경보 위젯 및 환기 이력 CSV 내보내기를 연동해주세요.</pre>
+        </div>
+
+        <!-- 예시 4: 스마트 아쿠아포닉스 & 수족관 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 4. [스마트 아쿠아포닉스 & 수족관] 수온/수위 감지 및 자동 먹이 디스펜서</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-aqua', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-aqua">우리 팀은 물고기와 식물을 함께 키우는 [친환경 스마트 아쿠아포닉스 & 수족관 생태계]를 구축합니다.
+- 하드웨어: 방수 온도 센서(DS18B20) 또는 아날로그 수위 센서를 GP27(ADC1)에 연결하여 어항 수위(0~100%) 및 수온을 계측합니다. SG90 서보모터(GP16)는 정해진 시간에 1회 회전(0도->90도->0도)하여 어류 사료를 투입하는 '회전형 피더(Feeder)' 역할을 수행하며, RGB LED(GP18~20)는 수초 생장을 돕는 수중 풀스펙트럼 LED 조명으로 동작합니다.
+- 3D 가상 공간: 투명한 유리 수조 탱크, 수초 배드, 상단 수경재배 채소 베드를 3D로 렌더링하고 먹이 투하 시 수면에 파문이 일어나는 시각 효과를 연동해주세요.
+- 대시보드 UI: 수위 게이지, 일일 급식 타이머 위젯, 조명 수경재배 타이머 스케줄을 추가해주세요.</pre>
+        </div>
+
+        <!-- 예시 5: 스마트 의류 케어 & 스타일러 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 5. [스마트 의류 케어 & 스타일러] 내부 습도 건조 및 살균 UV 케어</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-styler', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-styler">우리 팀은 스마트 가전 프로젝트로 [미니 스마트 의류관리기 & 스타일러(Styler)]를 개발합니다.
+- 하드웨어: DHT11(GP15) 온습도 센서로 스타일러 챔버 내부 습도(건조 진행도)를 계측하고, 도어 자석 리드 스위치를 GP14에 연결하여 문 열림을 감지합니다. SG90 서보모터(GP16)는 코스 완료 후 자연 건조를 위해 문을 15도 살짝 열어주는 '자동 문열림 래치'로 동작하며, RGB LED(GP18~20)는 살균 모드 시 보라색(UV 살균 광)으로 발광합니다.
+- 3D 가상 공간: 미려한 스타일러 캐비닛, 투명 강화유리 도어, 내부 옷걸이 행거를 3D로 구성하고 코스 진행에 따른 스팀 및 도어 래치 개방 모션을 연동해주세요.
+- 대시보드 UI: 스타일러 동작 코스(표준, 살균, 급속 건조) 선택 버튼과 잔여 시간 게이지를 구현해주세요.</pre>
+        </div>
+
+        <!-- 예시 6: 스마트 압축 분리수거함 -->
+        <div class="prompt-box">
+          <div class="prompt-title">
+            <span>예시 문장 6. [스마트 친환경 시티] 적재량 감지 자동 압축 쓰레기 분리수거함</span>
+            <button class="copy-btn" onclick="copyFullPrompt('context-ex-trash', this)">
+              📋 Context 복사
+            </button>
+          </div>
+          <pre id="context-ex-trash">우리 팀은 환경 보호를 위한 [스마트 자동 압축 쓰레기통 & 분리수거 관제 시스템]을 제작합니다.
+- 하드웨어: 초음파 거리 센서를 Pico 2 W의 GP26에 연결하여 수거함 내부 쓰레기 적재 높이(0~50cm)를 실시간 계측합니다. 적재량이 80%에 도달하면 SG90 서보모터(GP16)가 '압축 플레이트'를 90도 눌러 부피를 1/3로 축소시키며, RGB LED(GP18~20)는 적재 여유(녹색), 압축 중(주황색), 완전 만적 수거 필요(적색 점멸)를 표시합니다.
+- 3D 가상 공간: 공원 스마트 쓰레기통 부스, 회전식 투입구, 내부 압축 피스톤 메쉬를 3D 공간에 배치하고 압축 동작 시 기계 하강 애니메이션을 연동해주세요.
+- 대시보드 UI: 수거함 적재율(%), 일일 압축 횟수 카운터, 환경미화원 긴급 수거 요청 알림을 연동해주세요.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 실전 완성형 프롬프트 12선 (원클릭 풀 복사) -->
     <section id="sec-prompts">
-      <h2>6. 실전 프롬프트 12선 (원클릭 풀 Context 복사)</h2>
+      <h2>7. 실전 완성형 프롬프트 12선 (원클릭 풀 Context 복사)</h2>
       <p>
         아래 프롬프트 카드의 <strong>[원클릭 풀 복사]</strong> 버튼을 누르면, <strong>현재 플랫폼의 원본 코드 스니펫까지 통째로 포함된 완성형 프롬프트</strong>가 복사됩니다.<br>
         복사된 내용을 ChatGPT, Claude, Gemini 창에 붙여넣기만 하면 AI가 100% 여러분의 코드를 이해하고 정확한 수정본을 제공합니다!
@@ -1550,9 +1749,9 @@ Drei의 `<Html>` 컴포넌트가 브라우저 최상단 모달 다이얼로그(�
       </div>
     </section>
 
-    <!-- 7. FAQ & 트러블슈팅 -->
+    <!-- 8. FAQ & 트러블슈팅 -->
     <section id="sec-faq">
-      <h2>7. 트러블슈팅 & FAQ</h2>
+      <h2>8. 트러블슈팅 & FAQ</h2>
       <div class="card">
         <h3>Q. AI가 만들어준 코드를 넣었는데 화면에 값이 안 뜹니다!</h3>
         <p>
