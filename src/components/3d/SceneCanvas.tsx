@@ -4,6 +4,7 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { SmartHomeRoom } from './SmartHomeRoom';
 import { SmartFarmRoom } from './SmartFarmRoom';
+import { SmartFactoryRoom } from './SmartFactoryRoom';
 import { CameraRig } from './CameraRig';
 import { useIoTStore } from '@/core/store/useIoTStore';
 
@@ -80,9 +81,11 @@ export function SceneCanvas({
           castShadow={false}
         />
 
-        {/* 3D 씬 컴포넌트: 스마트팜 온실 또는 스마트 거실 허브 */}
+        {/* 3D 씬 컴포넌트: 스마트팜 온실 / 스마트 팩토리 공정 / 스마트 거실 허브 */}
         {roomId === 'new_project' ? (
           <SmartFarmRoom isModalOpen={isModalOpen} />
+        ) : roomId === 'dev_qa' ? (
+          <SmartFactoryRoom isModalOpen={isModalOpen} />
         ) : (
           <SmartHomeRoom
             approvalStatus={approvalStatus}
