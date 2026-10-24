@@ -70,27 +70,25 @@ export function LightObject() {
         </mesh>
       )}
 
-      {/* 5. 방 전체를 물들이는 강력한 3D 조명 (PointLight & SpotLight) */}
+      {/* 5. 방 전체를 물들이는 감성 조명 (PointLight & SpotLight) */}
       {isOn && (
         <>
           <pointLight
             position={[0, -0.15, 0]}
             color={lightColor}
-            intensity={12.0}
-            distance={14}
-            decay={1.6}
+            intensity={4.5}
+            distance={7}
+            decay={1.8}
             castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
             shadow-bias={-0.001}
           />
           <spotLight
             position={[0, 0, 0]}
             color={lightColor}
-            intensity={10.0}
-            angle={1.1}
-            penumbra={0.7}
-            distance={9}
+            intensity={3.5}
+            angle={0.9}
+            penumbra={0.6}
+            distance={6}
           />
         </>
       )}
