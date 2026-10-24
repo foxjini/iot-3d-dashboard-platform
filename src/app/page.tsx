@@ -169,6 +169,7 @@ export default function HomePage() {
         {/* 메인 3D 가상 공간 캔버스 */}
         <div className="flex-1 relative w-full h-full overflow-hidden">
           <SceneCanvas
+            roomId={activeRoomId}
             approvalStatus={approvalStatus}
             onApprove={handleApproveProposal}
             onReview={() => setShowReviewModal(true)}

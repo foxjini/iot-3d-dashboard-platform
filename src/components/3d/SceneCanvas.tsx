@@ -3,6 +3,7 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { SmartHomeRoom } from './SmartHomeRoom';
+import { SmartFarmRoom } from './SmartFarmRoom';
 import { CameraRig } from './CameraRig';
 import { useIoTStore } from '@/core/store/useIoTStore';
 
@@ -11,6 +12,7 @@ interface SceneCanvasProps {
   onApprove?: () => void;
   onReview?: () => void;
   isModalOpen?: boolean;
+  roomId?: string;
 }
 
 export function SceneCanvas({
@@ -18,6 +20,7 @@ export function SceneCanvas({
   onApprove = () => {},
   onReview = () => {},
   isModalOpen = false,
+  roomId = 'marketing',
 }: SceneCanvasProps) {
   const lightVal = useIoTStore((s) => s.sensors.cds_light.value);
   const rgbState = useIoTStore((s) => s.actuators.rgb_light.reportedState);
@@ -77,13 +80,17 @@ export function SceneCanvas({
           castShadow={false}
         />
 
-        {/* 3D 스마트홈 룸 및 카메라 컨트롤러 */}
-        <SmartHomeRoom
-          approvalStatus={approvalStatus}
-          onApprove={onApprove}
-          onReview={onReview}
-          isModalOpen={isModalOpen}
-        />
+        {/* 3D 씬 컴포넌트: 스마트팜 온실 또는 스마트 거실 허브 */}
+        {roomId === 'new_project' ? (
+          <SmartFarmRoom isModalOpen={isModalOpen} />
+        ) : (
+          <SmartHomeRoom
+            approvalStatus={approvalStatus}
+            onApprove={onApprove}
+            onReview={onReview}
+            isModalOpen={isModalOpen}
+          />
+        )}
         <CameraRig />
       </Canvas>
     </div>
