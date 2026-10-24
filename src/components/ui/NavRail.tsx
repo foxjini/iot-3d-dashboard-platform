@@ -122,7 +122,7 @@ export function NavRail({ onOpenIpModal, activeNavTab, setActiveNavTab }: NavRai
                 ? 'bg-[#185ADB] text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-500/20'
                 : 'bg-white text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-slate-200/70 shadow-sm'
             }`}
-            title="3D 가상 공간 뷰"
+            title="3D 가상 공간 뷰 (기본 투시 시점 복귀)"
           >
             <LayoutGrid className="w-5 h-5" />
           </button>

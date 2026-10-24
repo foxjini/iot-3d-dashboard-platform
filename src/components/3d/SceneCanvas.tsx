@@ -14,6 +14,8 @@ interface SceneCanvasProps {
   onReview?: () => void;
   isModalOpen?: boolean;
   roomId?: string;
+  cameraPreset?: 'default' | 'overview';
+  cameraTrigger?: number;
 }
 
 export function SceneCanvas({
@@ -22,6 +24,8 @@ export function SceneCanvas({
   onReview = () => {},
   isModalOpen = false,
   roomId = 'marketing',
+  cameraPreset = 'default',
+  cameraTrigger = 0,
 }: SceneCanvasProps) {
   const lightVal = useIoTStore((s) => s.sensors.cds_light.value);
   const rgbState = useIoTStore((s) => s.actuators.rgb_light.reportedState);
@@ -94,7 +98,7 @@ export function SceneCanvas({
             isModalOpen={isModalOpen}
           />
         )}
-        <CameraRig />
+        <CameraRig viewPreset={cameraPreset} presetTrigger={cameraTrigger} />
       </Canvas>
     </div>
   );

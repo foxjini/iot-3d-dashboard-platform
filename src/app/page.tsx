@@ -16,7 +16,7 @@ import { AddRoomModal } from '@/components/ui/AddRoomModal';
 import { ReviewModal } from '@/components/ui/ReviewModal';
 import { ExhibitionOverlay } from '@/components/ui/ExhibitionOverlay';
 import { useIoTStore } from '@/core/store/useIoTStore';
-import { Loader2, ArrowLeft, SlidersHorizontal, Calendar } from 'lucide-react';
+import { Loader2, ArrowLeft, SlidersHorizontal, Calendar, Eye } from 'lucide-react';
 
 // R3F 3D Canvas는 브라우저 전용이므로 SSR 완전 해제
 const SceneCanvas = dynamic(
@@ -85,6 +85,10 @@ export default function HomePage() {
   const [activeNavTab, setActiveNavTab] = useState('space');
   const [activeCenterTab, setActiveCenterTab] = useState<'inspector' | 'output' | 'thread'>('inspector');
 
+  // 3D 카메라 뷰 프리셋 상태 (default: 입체 투시각도, overview: 상공 전체 조감도)
+  const [cameraPreset, setCameraPreset] = useState<'default' | 'overview'>('default');
+  const [cameraTrigger, setCameraTrigger] = useState(0);
+
   // 모달 상태 관리
   const [showIpModal, setShowIpModal] = useState(false);
   const [showDeviceManageModal, setShowDeviceManageModal] = useState(false);
@@ -121,16 +125,33 @@ export default function HomePage() {
     addLog('info', `새 모니터링 공간 등록: ${newRoom.name}`, 'USER');
   };
 
+  // 좌측 NavRail 탭 전환 및 3D 가상 공간 뷰 포커스 핸들러
   const handleNavTabChange = (tab: string) => {
     setActiveNavTab(tab);
     if (tab === 'telemetry') {
       setActiveCenterTab('output');
-      showToast('실시간 센서 출력 모드로 전환되었습니다.');
+      showToast('실시간 센서 텔레메트리 출력 모드로 전환되었습니다.');
     } else if (tab === 'control') {
       setActiveCenterTab('inspector');
-      showToast('하드웨어 제어 인스펙터로 전환되었습니다.');
+      showToast('하드웨어 액추에이터 제어 인스펙터로 전환되었습니다.');
     } else if (tab === 'space') {
-      showToast('3D 가상 공간 뷰로 전환되었습니다.');
+      // 3D 가상 공간 뷰 버튼: 3D 기본 투시 시점으로 카메라 부드럽게 리셋
+      setCameraPreset('default');
+      setCameraTrigger((prev) => prev + 1);
+      showToast(`${currentRoom.name} 3D 가상 공간 기본 투시 뷰로 시점이 복귀되었습니다.`);
+    }
+  };
+
+  // 중앙 하단 전체 조감도 토글 핸들러
+  const handleToggleOverview = () => {
+    if (cameraPreset === 'overview') {
+      setCameraPreset('default');
+      setCameraTrigger((prev) => prev + 1);
+      showToast(`${currentRoom.name} 기본 입체 투시 시점으로 복귀했습니다.`);
+    } else {
+      setCameraPreset('overview');
+      setCameraTrigger((prev) => prev + 1);
+      showToast(`${currentRoom.name} 상공 전체 조감도(Top-down) 시점으로 전환되었습니다.`);
     }
   };
 
@@ -149,6 +170,8 @@ export default function HomePage() {
         roomList={roomList}
         onSelectRoom={(id) => {
           setActiveRoomId(id);
+          setCameraPreset('default');
+          setCameraTrigger((prev) => prev + 1);
           const found = roomList.find((r) => r.id === id);
           if (found) showToast(`"${found.name}" 구역으로 모니터링이 전환되었습니다.`);
         }}
@@ -173,6 +196,8 @@ export default function HomePage() {
             approvalStatus={approvalStatus}
             onApprove={handleApproveProposal}
             onReview={() => setShowReviewModal(true)}
+            cameraPreset={cameraPreset}
+            cameraTrigger={cameraTrigger}
             isModalOpen={
               showIpModal ||
               showDeviceManageModal ||
@@ -183,17 +208,19 @@ export default function HomePage() {
           />
 
           {/* 3D 뷰 캔버스 하단 오버레이 버튼들 */}
-          {/* 좌하단: ← 전체 조감도 */}
+          {/* 좌하단: 전체 조감도 토글 버튼 (입체 투시 ↔ 상공 탑다운 조감도) */}
           <div className="absolute left-6 bottom-6 z-10 pointer-events-auto">
             <button
-              onClick={() => {
-                setActiveRoomId('marketing');
-                showToast('메인 라운지 전체 조감도로 전환되었습니다.');
-              }}
-              className="px-4 py-2 rounded-full bg-white/90 hover:bg-white text-xs font-bold text-slate-700 shadow-[0_4px_14px_rgba(0,0,0,0.06)] border border-slate-200/80 transition-all flex items-center gap-1.5"
+              onClick={handleToggleOverview}
+              className={`px-4 py-2 rounded-full text-xs font-bold shadow-[0_4px_14px_rgba(0,0,0,0.08)] border transition-all flex items-center gap-1.5 ${
+                cameraPreset === 'overview'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-blue-500/25 ring-2 ring-blue-400/30'
+                  : 'bg-white/95 hover:bg-white text-slate-700 hover:text-blue-600 border-slate-200/80'
+              }`}
+              title={cameraPreset === 'overview' ? '기본 입체 투시 뷰로 복귀' : `${currentRoom.name} 상공 전체 조감도 시점`}
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>전체 조감도</span>
+              <Eye className="w-3.5 h-3.5" />
+              <span>{cameraPreset === 'overview' ? '기본 입체 뷰' : '전체 조감도'}</span>
             </button>
           </div>
 
@@ -250,6 +277,7 @@ export default function HomePage() {
       <DeviceManageModal
         isOpen={showDeviceManageModal}
         onClose={() => setShowDeviceManageModal(false)}
+        onFeedbackMessage={showToast}
       />
 
       <ScheduleModal
