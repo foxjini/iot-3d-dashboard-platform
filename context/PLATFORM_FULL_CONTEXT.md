@@ -47,14 +47,21 @@
 │   │   │   └── CameraRig.tsx     # 카메라 컨트롤러
 │   │   │
 │   │   └── ui/
-│   │       ├── HeaderHUD.tsx     # 상단 헤더 HUD (상태, 모드 전환)
-│   │       ├── ControlDrawer.tsx # [★수정 대상] 우측 센서 게이지 & 액추에이터 슬라이더
-│   │       ├── EventLogFeed.tsx  # 하단 실시간 통신 로그
-│   │       └── ExhibitionOverlay.tsx # 전시 모드 오버레이
+│   │       ├── NavRail.tsx           # 좌측 최외곽 기능 네비게이션 레일 (텔레메트리/스케줄/장치관리/매뉴얼)
+│   │       ├── RoomsSidebar.tsx      # 공간 목록 사이드바 및 모달 런처 (+ 새 공간 추가, 장치 관리, 자동화 스케줄)
+│   │       ├── CenterHeader.tsx      # 중앙 상단 공간 탭, 센서 새로고침, 카메라 리셋, 단축키 툴팁
+│   │       ├── InspectorPanel.tsx    # 우측 3단 멀티탭 인스펙터 (장치 제어 / 센서 출력 / 제어 로그)
+│   │       ├── SensorOutputPanel.tsx # [신규] 실시간 센서 게이지, Raw ADC 스트림, CSV 내보내기 패널
+│   │       ├── ControlLogPanel.tsx   # [신규] 카테고리별(하드웨어/사용자/시뮬레이터/시스템) 실시간 제어 로그 스트림
+│   │       ├── DeviceManageModal.tsx # [신규] 4대 핀아웃(GP15, GP16, GP18~20, GP26) 상태 점검 및 테스트 모달
+│   │       ├── ScheduleModal.tsx     # [신규] 5대 이벤트 구동 자동화 규칙 토글 모달
+│   │       ├── AddRoomModal.tsx      # [신규] 팀별 프로젝트 새 가상 공간 추가 모달
+│   │       ├── ReviewModal.tsx       # [신규] 3D 이상치 감지 시 승인 대기 검토 모달
+│   │       └── PromptBar.tsx         # [신규] 지능형 한국어 자연어 명령 파서 및 퀵 액션 칩
 │   │
 │   └── app/
 │       ├── layout.tsx            # 루트 레이아웃 & IoTProvider
-│       ├── page.tsx              # 3D 메인 페이지
+│       ├── page.tsx              # 스마트홈 3D 통합 관제 대시보드 메인 페이지
 │       └── 2d/page.tsx           # 2D 클래식 대시보드
 ```
 
@@ -62,7 +69,7 @@
 > 1. `firmware/circuitpython/code.py`
 > 2. `src/core/types/iot.ts`
 > 3. `src/core/adapter/MockIoTAdapter.ts`
-> 4. `src/components/3d/SmartHomeRoom.tsx` (또는 신규 씬 컴포넌트) + `src/components/ui/ControlDrawer.tsx`
+> 4. `src/components/3d/SmartHomeRoom.tsx` (또는 신규 씬 컴포넌트) + `src/components/ui/InspectorPanel.tsx` 또는 `SensorOutputPanel.tsx`
 
 ---
 
@@ -316,4 +323,4 @@ export class MockIoTAdapter implements IIoTAdapter {
    - `src/core/adapter/MockIoTAdapter.ts`의 `setInterval` 내부에 새 센서의 자연스러운 변동 난수 계산식을 추가하고 `updateSensor(...)`를 호출합니다.
 4. **Step 4 (3D 가상 공간 및 UI 연동)**:
    - `src/components/3d/`에 새 씬 컴포넌트(예: `SmartFarmRoom.tsx`)를 생성하고, `SmartHomeRoom.tsx`를 교체합니다.
-   - `src/components/ui/ControlDrawer.tsx`에서 새 센서 수치를 표시하는 카드/게이지 위젯을 추가합니다.
+   - `src/components/ui/SensorOutputPanel.tsx` 및 `InspectorPanel.tsx`에서 새 센서 수치를 표시하는 게이지 및 제어 위젯을 추가합니다.

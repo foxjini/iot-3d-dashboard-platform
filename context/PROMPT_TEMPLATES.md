@@ -132,7 +132,7 @@ Pico 2 W에 거리 측정을 위한 초음파 센서(HC-SR04)를 추가하고 �
 1. `firmware/circuitpython/code.py`: `adafruit_hcsr04.HCSR04`를 사용하여 거리를 측정하고 `/api/status` JSON에 `"distance_cm"` 필드 추가
 2. `src/core/types/iot.ts`: `sensors.distance_cm` 타입 추가
 3. `src/core/adapter/MockIoTAdapter.ts`: 10~150cm 사이의 거리 시뮬레이션 난수 생성
-4. `src/components/ui/ControlDrawer.tsx`: 측정된 거리를 실시간 게이지 바로 표시하는 UI 위젯 추가
+4. `src/components/ui/SensorOutputPanel.tsx`: 측정된 거리를 실시간 게이지 바로 표시하고 CSV 항목에 추가
 ```
 
 ---

@@ -65,7 +65,7 @@
 1. firmware/circuitpython/code.py
 2. src/core/types/iot.ts
 3. src/core/adapter/MockIoTAdapter.ts
-4. src/components/3d/SmartHomeRoom.tsx (또는 신규 씬 컴포넌트) + src/components/ui/ControlDrawer.tsx
+4. src/components/3d/SmartHomeRoom.tsx (또는 신규 씬 컴포넌트) + src/components/ui/InspectorPanel.tsx 또는 SensorOutputPanel.tsx
 
 ---
 
@@ -310,4 +310,4 @@ export class MockIoTAdapter implements IIoTAdapter {
    src/core/adapter/MockIoTAdapter.ts의 setInterval 내부에 새 센서의 자연스러운 변동 난수 계산식을 추가하고 updateSensor(...)를 호출합니다.
 4. Step 4 (3D 가상 공간 및 UI 연동):
    src/components/3d/에 새 씬 컴포넌트(예: SmartFarmRoom.tsx)를 생성하고, SmartHomeRoom.tsx를 교체합니다.
-   src/components/ui/ControlDrawer.tsx에서 새 센서 수치를 표시하는 카드/게이지 위젯을 추가합니다.
+   src/components/ui/SensorOutputPanel.tsx 및 InspectorPanel.tsx에서 새 센서 수치를 표시하는 게이지 및 제어 위젯을 추가합니다.

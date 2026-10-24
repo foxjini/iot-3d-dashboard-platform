@@ -14,6 +14,6 @@
 2. `src/core/types/iot.ts`에 신규 장치 타입 추가
 3. `src/core/adapter/MockIoTAdapter.ts`에 시뮬레이션용 데이터 생성기 추가
 4. `src/components/3d/`에 3D 씬 오브젝트(R3F 컴포넌트) 추가 또는 가구 배치 변경
-5. `src/components/ui/ControlDrawer.tsx` 또는 `SensorCards.tsx`에 제어 위젯 추가
+5. `src/components/ui/InspectorPanel.tsx` 또는 `SensorOutputPanel.tsx`에 제어 위젯 및 센서 게이지 추가
 
 모든 AI 에이전트는 환각(Hallucination) 없이 일관된 코드 품질을 유지해야 합니다.
