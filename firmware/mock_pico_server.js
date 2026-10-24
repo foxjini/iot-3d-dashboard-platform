@@ -54,6 +54,7 @@ const server = http.createServer((req, res) => {
     const responsePayload = {
       temperature: hardwareState.temperature,
       humidity: hardwareState.humidity,
+      light_adc: hardwareState.lightRaw,
       light_raw: hardwareState.lightRaw,
       servo_angle: hardwareState.servoAngle,
       rgb_color: hardwareState.rgbColor,

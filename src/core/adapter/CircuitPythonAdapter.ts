@@ -5,8 +5,11 @@ export class CircuitPythonAdapter implements IIoTAdapter {
   private pollInterval: NodeJS.Timeout | null = null;
   private staleCheckInterval: NodeJS.Timeout | null = null;
   private abortController: AbortController | null = null;
+  private isFetching = false;
+  private isDestroyed = false;
 
   init(): void {
+    this.isDestroyed = false;
     const store = useIoTStore.getState();
     const cleanIp = (store.picoIpAddress || '').replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
     store.setConnectionState('connecting');
@@ -14,12 +17,13 @@ export class CircuitPythonAdapter implements IIoTAdapter {
 
     // 1.5초마다 Pico 2 W 상태 폴링
     this.pollInterval = setInterval(() => {
-      if (useIoTStore.getState().mode !== 'hardware') return;
+      if (this.isDestroyed || useIoTStore.getState().mode !== 'hardware') return;
       this.fetchPicoStatus();
     }, 1500);
 
     // 5초마다 미수신 센서 stale 검사
     this.staleCheckInterval = setInterval(() => {
+      if (this.isDestroyed) return;
       useIoTStore.getState().checkStaleSensors();
     }, 5000);
 
@@ -28,18 +32,24 @@ export class CircuitPythonAdapter implements IIoTAdapter {
   }
 
   destroy(): void {
+    this.isDestroyed = true;
     if (this.pollInterval) clearInterval(this.pollInterval);
     if (this.staleCheckInterval) clearInterval(this.staleCheckInterval);
     if (this.abortController) this.abortController.abort();
+    this.isFetching = false;
   }
 
   private async fetchPicoStatus(): Promise<void> {
+    if (this.isFetching || this.isDestroyed) return;
+    this.isFetching = true;
+
     const store = useIoTStore.getState();
     const rawIp = store.picoIpAddress;
     if (!rawIp) {
       if (store.connectionState !== 'disconnected') {
         store.setConnectionState('disconnected');
       }
+      this.isFetching = false;
       return;
     }
     const ip = rawIp.replace(/^https?:\/\//i, '').replace(/\/+$/, '').trim();
@@ -75,7 +85,9 @@ export class CircuitPythonAdapter implements IIoTAdapter {
       // 센서 데이터 갱신
       if (typeof data.temperature === 'number') store.updateSensor('dht11_temp', data.temperature);
       if (typeof data.humidity === 'number') store.updateSensor('dht11_humi', data.humidity);
-      if (typeof data.light_adc === 'number') store.updateSensor('cds_light', data.light_adc);
+      
+      const lightVal = typeof data.light_adc === 'number' ? data.light_adc : (typeof data.light_raw === 'number' ? data.light_raw : null);
+      if (lightVal !== null) store.updateSensor('cds_light', lightVal);
 
       // 액추에이터 reported 상태 갱신 (pending이 아닐 때만)
       if (!store.actuators.sg90_door.pending && typeof data.servo_angle === 'number') {
@@ -90,6 +102,8 @@ export class CircuitPythonAdapter implements IIoTAdapter {
         store.setConnectionState('error');
         store.addLog('warn', `Pico 2 W 연결 실패 또는 응답 없음 (${message})`, 'PICO_2W');
       }
+    } finally {
+      this.isFetching = false;
     }
   }
 
