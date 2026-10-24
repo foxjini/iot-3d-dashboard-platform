@@ -147,8 +147,8 @@ export function SmartFarmRoom({ isModalOpen = false }: SmartFarmRoomProps) {
       </group>
 
       {/* 6. 스마트팜 조명(식물 생장등) 및 Cds 조도센서 노드 */}
-      <LightObject />
-      <CdsSensorNode />
+      <LightObject isModalOpen={isModalOpen} />
+      <CdsSensorNode isModalOpen={isModalOpen} />
     </group>
   );
 }

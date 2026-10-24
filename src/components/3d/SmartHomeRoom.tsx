@@ -191,11 +191,13 @@ export function SmartHomeRoom({
         </group>
 
         {/* 데스크 이름표 뱃지 */}
-        <Html position={[0, 1.05, 0]} center distanceFactor={8}>
-          <div className="px-2 py-0.5 rounded-full bg-white/90 border border-slate-200 shadow-2xs text-[10px] font-bold text-slate-700 whitespace-nowrap">
-            DHT11 센서 노드
-          </div>
-        </Html>
+        {!isModalOpen && (
+          <Html position={[0, 1.05, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
+            <div className="px-2 py-0.5 rounded-full bg-white/90 border border-slate-200 shadow-2xs text-[10px] font-bold text-slate-700 whitespace-nowrap">
+              DHT11 센서 노드
+            </div>
+          </Html>
+        )}
       </group>
 
       {/* 8. 중앙 라운드 미팅 테이블 (Round Meeting Table - Miro 자리) */}
@@ -220,12 +222,14 @@ export function SmartHomeRoom({
         </mesh>
 
         {/* Pico 2 W 태그 */}
-        <Html position={[0, 0.98, 0]} center distanceFactor={8}>
-          <div className="px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs text-[10px] font-bold whitespace-nowrap flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-            <span>Pico 2 W 제어기</span>
-          </div>
-        </Html>
+        {!isModalOpen && (
+          <Html position={[0, 0.98, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
+            <div className="px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs text-[10px] font-bold whitespace-nowrap flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+              <span>Pico 2 W 제어기</span>
+            </div>
+          </Html>
+        )}
       </group>
 
       {/* 9. 트렌디한 파스텔 틸 모던 소파 (Modern Sofa) */}
@@ -254,11 +258,13 @@ export function SmartHomeRoom({
         ))}
 
         {/* 휴식 공간 태그 */}
-        <Html position={[0.7, 0.9, 0]} center distanceFactor={8}>
-          <div className="px-2 py-0.5 rounded-full bg-white/90 border border-slate-200 shadow-2xs text-[10px] font-bold text-slate-700 whitespace-nowrap">
-            스마트 휴식 공간
-          </div>
-        </Html>
+        {!isModalOpen && (
+          <Html position={[0.7, 0.9, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
+            <div className="px-2 py-0.5 rounded-full bg-white/90 border border-slate-200 shadow-2xs text-[10px] font-bold text-slate-700 whitespace-nowrap">
+              스마트 휴식 공간
+            </div>
+          </Html>
+        )}
       </group>
 
       {/* 10. 거실 플로어 대형 관엽식물 (Monstera Plant in Corner) */}
@@ -274,10 +280,10 @@ export function SmartHomeRoom({
       </group>
 
       {/* 11. 하드웨어 연동 장치 4종 */}
-      <DoorObject />
-      <LightObject />
-      <DhtSensorBadge />
-      <CdsSensorNode />
+      <DoorObject isModalOpen={isModalOpen} />
+      <LightObject isModalOpen={isModalOpen} />
+      <DhtSensorBadge isModalOpen={isModalOpen} />
+      <CdsSensorNode isModalOpen={isModalOpen} />
 
       {/* 12. Nomadian 스타일 3D 승인 말풍선 (NEEDS YOU Callout Bubble) */}
       <NeedsYouCallout3D

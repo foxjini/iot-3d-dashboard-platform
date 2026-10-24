@@ -4,7 +4,11 @@ import React from 'react';
 import { useIoTStore } from '@/core/store/useIoTStore';
 import { Html } from '@react-three/drei';
 
-export function DhtSensorBadge() {
+interface DhtSensorBadgeProps {
+  isModalOpen?: boolean;
+}
+
+export function DhtSensorBadge({ isModalOpen = false }: DhtSensorBadgeProps) {
   const temp = useIoTStore((s) => s.sensors.dht11_temp);
   const humi = useIoTStore((s) => s.sensors.dht11_humi);
   const selectedDeviceId = useIoTStore((s) => s.selectedDeviceId);
@@ -37,31 +41,33 @@ export function DhtSensorBadge() {
       </mesh>
 
       {/* 실시간 수치 플로팅 배지 */}
-      <Html position={[0, 0.45, 0]} center distanceFactor={7}>
-        <div
-          className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border backdrop-blur-md transition-all shadow-lg cursor-pointer ${
-            isSelected
-              ? 'bg-blue-600/90 border-blue-400 text-white scale-105'
-              : 'bg-slate-900/80 border-slate-700/80 text-slate-100 hover:bg-slate-800/90'
-          }`}
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedDevice('dht11_temp');
-          }}
-        >
-          <div className="flex flex-col">
-            <span className="text-[10px] text-slate-300 font-medium leading-none">DHT11 센서</span>
-            <div className="flex items-center gap-1.5 text-xs font-bold mt-0.5">
-              <span className="text-rose-400">{temp.value.toFixed(1)}℃</span>
-              <span className="text-slate-500">|</span>
-              <span className="text-sky-400">{humi.value.toFixed(1)}%</span>
+      {!isModalOpen && (
+        <Html position={[0, 0.45, 0]} center distanceFactor={7} zIndexRange={[10, 0]}>
+          <div
+            className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border backdrop-blur-md transition-all shadow-lg cursor-pointer ${
+              isSelected
+                ? 'bg-blue-600/90 border-blue-400 text-white scale-105'
+                : 'bg-slate-900/80 border-slate-700/80 text-slate-100 hover:bg-slate-800/90'
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedDevice('dht11_temp');
+            }}
+          >
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-300 font-medium leading-none">DHT11 센서</span>
+              <div className="flex items-center gap-1.5 text-xs font-bold mt-0.5">
+                <span className="text-rose-400">{temp.value.toFixed(1)}℃</span>
+                <span className="text-slate-500">|</span>
+                <span className="text-sky-400">{humi.value.toFixed(1)}%</span>
+              </div>
             </div>
+            {temp.isStale && (
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" title="데이터 지연" />
+            )}
           </div>
-          {temp.isStale && (
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" title="데이터 지연" />
-          )}
-        </div>
-      </Html>
+        </Html>
+      )}
     </group>
   );
 }

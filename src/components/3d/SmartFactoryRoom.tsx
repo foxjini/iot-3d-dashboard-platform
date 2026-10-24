@@ -299,8 +299,8 @@ export function SmartFactoryRoom({ isModalOpen = false }: SmartFactoryRoomProps)
       )}
 
       {/* 기존 조명 및 Cds 센서 노드 결합 */}
-      <LightObject />
-      <CdsSensorNode />
+      <LightObject isModalOpen={isModalOpen} />
+      <CdsSensorNode isModalOpen={isModalOpen} />
     </group>
   );
 }

@@ -6,7 +6,11 @@ import * as THREE from 'three';
 import { useIoTStore } from '@/core/store/useIoTStore';
 import { Html } from '@react-three/drei';
 
-export function DoorObject() {
+interface DoorObjectProps {
+  isModalOpen?: boolean;
+}
+
+export function DoorObject({ isModalOpen = false }: DoorObjectProps) {
   const doorHingeRef = useRef<THREE.Group>(null);
   const reportedAngle = useIoTStore((s) => s.actuators.sg90_door.reportedAngle);
   const isPending = useIoTStore((s) => s.actuators.sg90_door.pending);
@@ -101,8 +105,8 @@ export function DoorObject() {
         </group>
 
         {/* 선택 시 상단 3D 배지 */}
-        {isSelected && (
-          <Html position={[0, 2.6, 0.6]} center distanceFactor={8}>
+        {isSelected && !isModalOpen && (
+          <Html position={[0, 2.6, 0.6]} center distanceFactor={8} zIndexRange={[10, 0]}>
             <div className="px-2.5 py-1 rounded-lg bg-blue-600/95 text-white text-xs font-bold whitespace-nowrap shadow-xl backdrop-blur-md pointer-events-none animate-bounce border border-blue-300">
               SG90 도어 [{reportedAngle}°] {isPending ? '동작 중...' : reportedAngle === 0 ? '닫힘' : '열림'}
             </div>

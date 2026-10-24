@@ -4,7 +4,11 @@ import React from 'react';
 import { useIoTStore } from '@/core/store/useIoTStore';
 import { Html } from '@react-three/drei';
 
-export function LightObject() {
+interface LightObjectProps {
+  isModalOpen?: boolean;
+}
+
+export function LightObject({ isModalOpen = false }: LightObjectProps) {
   const reportedColor = useIoTStore((s) => s.actuators.rgb_light.reportedColor);
   const reportedState = useIoTStore((s) => s.actuators.rgb_light.reportedState);
   const isPending = useIoTStore((s) => s.actuators.rgb_light.pending);
@@ -94,8 +98,8 @@ export function LightObject() {
       )}
 
       {/* 선택 시 상단 3D 배지 */}
-      {isSelected && (
-        <Html position={[0, 0.7, 0]} center distanceFactor={8}>
+      {isSelected && !isModalOpen && (
+        <Html position={[0, 0.7, 0]} center distanceFactor={8} zIndexRange={[10, 0]}>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/95 text-white text-xs font-bold whitespace-nowrap shadow-2xl backdrop-blur-md border border-slate-700 animate-bounce">
             <span
               className="w-3.5 h-3.5 rounded-full border border-white/60 shadow-sm"
