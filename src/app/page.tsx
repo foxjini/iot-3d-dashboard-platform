@@ -155,6 +155,60 @@ export default function HomePage() {
     }
   };
 
+  // 공간 3-dot 더보기 메뉴 액션 핸들러들
+  const handleToggleNotification = (roomId: string) => {
+    setRoomList((prev) =>
+      prev.map((r) => {
+        if (r.id === roomId) {
+          const next = !r.hasNotification;
+          showToast(`"${r.name}" 알림이 ${next ? '활성화' : '해제'}되었습니다.`);
+          return { ...r, hasNotification: next };
+        }
+        return r;
+      })
+    );
+  };
+
+  const handleRenameRoom = (roomId: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    setRoomList((prev) =>
+      prev.map((r) => (r.id === roomId ? { ...r, name: trimmed } : r))
+    );
+    showToast(`공간 이름이 "${trimmed}"(으)로 변경되었습니다.`);
+    addLog('info', `공간 이름 변경: ${trimmed}`, 'USER');
+  };
+
+  const handleDuplicateRoom = (roomId: string) => {
+    const target = roomList.find((r) => r.id === roomId);
+    if (!target) return;
+    const newId = `${target.id}_copy_${Date.now()}`;
+    const newRoom: RoomItem = {
+      ...target,
+      id: newId,
+      name: `${target.name} (사본)`,
+    };
+    setRoomList((prev) => [...prev, newRoom]);
+    setActiveRoomId(newId);
+    showToast(`"${target.name}" 공간이 복제되었습니다.`);
+    addLog('info', `새 모니터링 공간 복제: ${newRoom.name}`, 'USER');
+  };
+
+  const handleDeleteRoom = (roomId: string) => {
+    if (roomList.length <= 1) {
+      showToast('최소 1개의 모니터링 공간이 유지되어야 합니다.');
+      return;
+    }
+    const target = roomList.find((r) => r.id === roomId);
+    const remaining = roomList.filter((r) => r.id !== roomId);
+    setRoomList(remaining);
+    if (activeRoomId === roomId) {
+      setActiveRoomId(remaining[0].id);
+    }
+    showToast(`"${target?.name || '공간'}"이(가) 삭제되었습니다.`);
+    addLog('info', `공간 삭제: ${target?.name}`, 'USER');
+  };
+
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-[#EFF2F6] text-slate-800 flex select-none">
       {/* 1. 최좌측 슬림 세로 내비게이션 레일 (NavRail) */}
@@ -177,6 +231,11 @@ export default function HomePage() {
         }}
         onOpenAddRoomModal={() => setShowAddRoomModal(true)}
         onOpenScheduleModal={() => setShowScheduleModal(true)}
+        onOpenDeviceManageModal={() => setShowDeviceManageModal(true)}
+        onToggleNotification={handleToggleNotification}
+        onRenameRoom={handleRenameRoom}
+        onDuplicateRoom={handleDuplicateRoom}
+        onDeleteRoom={handleDeleteRoom}
       />
 
       {/* 3. 중앙 3D 가상 공간 워크스페이스 */}
